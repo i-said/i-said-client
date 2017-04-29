@@ -19,6 +19,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.koushikdutta.async.future.FutureCallback;
 
 import java.util.List;
 
@@ -219,6 +220,16 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 animateCamera(point);
                 //            mMap.moveCamera(CameraUpdateFactory.zoomTo(zoom));
             }
+
+            Utils.getDataList(getApplicationContext(), point.lat, point.lon, new FutureCallback<List<PoiData>>() {
+                @Override
+                public void onCompleted(Exception e, List<PoiData> pois) {
+                    for (PoiData data : pois) {
+                        addMarker(new LatLng(data.lat, data.lng), data.name);
+                    }
+                }
+            });
+
 
             mHandler.postDelayed(this,point.waittime);
 
