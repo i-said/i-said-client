@@ -6,8 +6,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.WorkerThread;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -23,6 +25,7 @@ import com.koushikdutta.async.future.FutureCallback;
 
 import java.util.List;
 
+
 public class MainActivity extends FragmentActivity implements OnMapReadyCallback {
     private static final String TAG = MainActivity.class.getSimpleName();
 
@@ -34,6 +37,11 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
     private List<FlightDataPoint> mList;
     private boolean mIsAuto = true;
+
+
+    private TextView mSpeedInfoView;
+    private TextView mAltitudeInfoView;
+    private TextView mCurrentTimeInfoView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +61,9 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
+        mSpeedInfoView = (TextView) findViewById(R.id.speed);
+        mAltitudeInfoView = (TextView) findViewById(R.id.feet);
+        mCurrentTimeInfoView = (TextView) findViewById(R.id.current_time);
     }
 
 
@@ -235,6 +246,21 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
             mCurrent += 1;
 
+            long speed = point.speed;
+            long altitude = point.altitude;
+            long timestamp = point.timestamp;
+            String timeStr = Utils.formattedTimestamp(timestamp);
+            Log.d(TAG, timeStr);
+
+            if (mSpeedInfoView !=null) {
+                mSpeedInfoView.setText(Integer.toString((int) speed));
+            }
+            if (mAltitudeInfoView !=null) {
+                mAltitudeInfoView.setText(Integer.toString((int) altitude));
+            }
+            if (mCurrentTimeInfoView !=null) {
+                mCurrentTimeInfoView.setText(timeStr);
+            }
         }
     };
 

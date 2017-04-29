@@ -12,6 +12,14 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Stack;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -122,6 +130,13 @@ public class Utils {
         }
 
         return null;
+    }
+
+    public static String formattedTimestamp(long timestamp) {
+        final String timeFormat = "HH:mm";
+        Log.d(TAG, String.valueOf(timestamp));
+        Timestamp ts = new Timestamp(timestamp * 1000);
+        return new SimpleDateFormat(timeFormat, Locale.JAPAN).format(ts);
     }
 
 
