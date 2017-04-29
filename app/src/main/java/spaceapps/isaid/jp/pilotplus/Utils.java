@@ -8,11 +8,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Stack;
 
 /**
  * Created by iwsbrfts on 17/04/29.
@@ -98,14 +96,13 @@ public class Utils {
 
                     Log.d(TAG, "x:" + count + " diffLat:" + diffLat + " diffLon" + diffLon);
 
-                    for(int i = 1, max = count + 1; i < max; i++) {
-                        Log.d(TAG, "a:" + i);
+                    for (int i = 1, max = count + 1; i < max; i++) {
 
                         FlightDataPoint next = old.clone();
-                        next.timestamp = next.timestamp + (i * TIME_DIVIDE);
-                        next.waittime = (next.timestamp - old.timestamp) * 50;
-                        next.lat = next.lat + (diffLat * (i * 1f));
-                        next.lon = next.lon + (diffLon * (i * 1f));
+                        next.timestamp = next.timestamp + TIME_DIVIDE;
+                        next.waittime = (next.timestamp - old.timestamp) * TIME_SPEED;
+                        next.lat = next.lat + diffLat;
+                        next.lon = next.lon + diffLon;
 
                         next.isDummy = true;
 
@@ -120,7 +117,7 @@ public class Utils {
                         if(point.timestamp < next.timestamp) {
                             break;
                         }
-
+                        Log.d(TAG, next.toString());
 
                         retData.add(next);
 
@@ -128,14 +125,15 @@ public class Utils {
 
                     }
 
-                    time = (int)(point.timestamp - old.timestamp);
+
+                } else {
+                    point.waittime = time * TIME_SPEED;
+
+                    retData.add(point);
+                    old = point;
 
                 }
 
-                point.waittime = time * TIME_SPEED;
-
-                retData.add(point);
-                old = point;
 
             }
 
