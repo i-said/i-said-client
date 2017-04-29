@@ -4,6 +4,10 @@ import android.content.Context;
 import android.location.Location;
 import android.util.Log;
 
+import com.google.gson.reflect.TypeToken;
+import com.koushikdutta.async.future.FutureCallback;
+import com.koushikdutta.ion.Ion;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -227,6 +231,15 @@ public class Utils {
         return null;
     }
 
+
+    public static void getDataList(Context context, float lat, float lon, FutureCallback<List<PoiData>> callback) {
+
+        Ion.with(context)
+                .load("https://spaceapp-i-said.mybluemix.net/api/poi-sample2?lat=" + lat + "&lon=" + lon)
+                .as(new TypeToken<List<PoiData>>() {
+                })
+                .setCallback(callback);
+    }
 
 
 }
