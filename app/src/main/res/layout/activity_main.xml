@@ -23,31 +23,33 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="@dimen/info_height"
         android:background="#99000000"
         android:orientation="horizontal">
 
         <TextView
             android:layout_width="300dp"
-            android:layout_height="50dp"
+            android:layout_height="@dimen/info_height"
             android:text="Guide from Sky"
+            android:textColor="@color/info_text_color"
             android:textSize="30sp" />
 
         <LinearLayout
-            android:gravity="right"
             android:layout_width="match_parent"
-            android:layout_height="50dp">
+            android:layout_height="@dimen/info_height"
+            android:gravity="right">
 
             <LinearLayout
                 android:layout_width="@dimen/info_width"
-                android:layout_height="50dp"
+                android:layout_height="@dimen/info_height"
                 android:orientation="vertical">
 
                 <TextView
                     android:layout_width="match_parent"
-                    android:layout_height="20dp"
+                    android:layout_height="@dimen/info_sub_text_height"
                     android:layout_gravity="right"
                     android:text="speed"
+                    android:textColor="@color/info_text_color"
                     android:textSize="@dimen/info_text_size" />
 
                 <TextView
@@ -56,19 +58,21 @@
                     android:layout_height="match_parent"
                     android:layout_gravity="right"
                     android:text="600"
+                    android:textColor="@color/info_text_color"
                     android:textSize="20sp" />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="@dimen/info_width"
-                android:layout_height="50dp"
+                android:layout_height="@dimen/info_height"
                 android:orientation="vertical">
 
                 <TextView
                     android:layout_width="match_parent"
-                    android:layout_height="20dp"
+                    android:layout_height="@dimen/info_sub_text_height"
                     android:layout_gravity="right"
                     android:text="feet"
+                    android:textColor="@color/info_text_color"
                     android:textSize="@dimen/info_text_size" />
 
                 <TextView
@@ -77,6 +81,7 @@
                     android:layout_height="match_parent"
                     android:layout_gravity="right"
                     android:text="6000"
+                    android:textColor="@color/info_text_color"
                     android:textSize="20sp" />
             </LinearLayout>
 
@@ -84,14 +89,15 @@
             <!--便名-->
             <LinearLayout
                 android:layout_width="@dimen/info_width"
-                android:layout_height="50dp"
+                android:layout_height="@dimen/info_height"
                 android:orientation="vertical">
 
                 <TextView
                     android:layout_width="match_parent"
-                    android:layout_height="20dp"
+                    android:layout_height="@dimen/info_sub_text_height"
                     android:layout_gravity="right"
                     android:text="ICAQ"
+                    android:textColor="@color/info_text_color"
                     android:textSize="@dimen/info_text_size" />
 
                 <TextView
@@ -100,6 +106,7 @@
                     android:layout_height="match_parent"
                     android:layout_gravity="right"
                     android:text="JAL"
+                    android:textColor="@color/info_text_color"
                     android:textSize="25sp" />
             </LinearLayout>
 
@@ -111,9 +118,10 @@
 
                 <TextView
                     android:layout_width="match_parent"
-                    android:layout_height="20dp"
+                    android:layout_height="@dimen/info_sub_text_height"
                     android:layout_gravity="right"
                     android:text="ICAQ"
+                    android:textColor="@color/info_text_color"
                     android:textSize="@dimen/info_text_size" />
 
                 <TextView
@@ -122,6 +130,7 @@
                     android:layout_height="match_parent"
                     android:layout_gravity="right"
                     android:text="11:00"
+                    android:textColor="@color/info_text_color"
                     android:textSize="25sp" />
             </LinearLayout>
         </LinearLayout>
