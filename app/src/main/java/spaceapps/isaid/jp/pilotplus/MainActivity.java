@@ -6,22 +6,16 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.WorkerThread;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.os.AsyncTaskCompat;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
@@ -38,7 +32,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     private Marker mAirplaneMarker = null;
 
     private List<FlightDataPoint> mList;
-    private boolean mIsAuto = false;
+    private boolean mIsAuto = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,7 +76,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+        mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
 
         task.execute();
     }
@@ -174,21 +168,22 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             if(mMax <= mCurrent) return;
             FlightDataPoint point =  mData.get(mCurrent);
 
-//            int mNext = mCurrent + 5;
-//            if(mNext <= mCurrent) {
+//            int mNext = mCurrent + 4;
+//
+//            if (mNext >= mMax) {
 //                mNext = mMax - 1;
 //            }
-
+//
 //            FlightDataPoint nextPoint = mData.get(mNext);
-            Log.d(TAG,"wait:" + point.toString());
+//            Log.d(TAG,"wait:" + point.toString());
+//            LatLng nextLatLon = new LatLng(nextPoint.lat, nextPoint.lon);
 
 
             LatLng nowLatLon = new LatLng(point.lat,point.lon);
 
             mAirplaneMarker.setPosition(nowLatLon);
-//            mAirplaneMarker.setRotation(point.direction);
+//            mAirplaneMarker.setRotation(nextPoint.direction);
 
-//            LatLng nextLatLon = new LatLng(nextPoint.lat , nextPoint.lon);
 
 
 //            int width = getResources().getDisplayMetrics().widthPixels;
@@ -240,7 +235,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         cpBuilder.bearing(point.direction);
         cpBuilder.target(nowLatLon);
         cpBuilder.tilt(60);
-        cpBuilder.zoom(12f);
+        cpBuilder.zoom(15f);
 
         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cpBuilder.build()));
     }
