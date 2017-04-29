@@ -1,9 +1,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:map="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools">
-
+    android:layout_height="match_parent">
 
 
     <fragment
@@ -15,12 +14,127 @@
 
 
     <ImageButton
+        android:id="@+id/btn_auto"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:id="@+id/btn_auto"
-        android:src="@drawable/scalepin_xx"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:src="@drawable/scalepin_xx" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/info_height"
+        android:background="#99000000"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="300dp"
+            android:layout_height="@dimen/info_height"
+            android:text="Guide from Sky"
+            android:textColor="@color/info_text_color"
+            android:textSize="30sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/info_height"
+            android:gravity="right">
+
+            <LinearLayout
+                android:layout_width="@dimen/info_width"
+                android:layout_height="@dimen/info_height"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/info_sub_text_height"
+                    android:layout_gravity="right"
+                    android:text="speed"
+                    android:textColor="@color/info_text_color"
+                    android:textSize="@dimen/info_text_size" />
+
+                <TextView
+                    android:id="@+id/speed"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="right"
+                    android:text="600"
+                    android:textColor="@color/info_text_color"
+                    android:textSize="20sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="@dimen/info_width"
+                android:layout_height="@dimen/info_height"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/info_sub_text_height"
+                    android:layout_gravity="right"
+                    android:text="feet"
+                    android:textColor="@color/info_text_color"
+                    android:textSize="@dimen/info_text_size" />
+
+                <TextView
+                    android:id="@+id/feet"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="right"
+                    android:text="6000"
+                    android:textColor="@color/info_text_color"
+                    android:textSize="20sp" />
+            </LinearLayout>
+
+
+            <!--便名-->
+            <LinearLayout
+                android:layout_width="@dimen/info_width"
+                android:layout_height="@dimen/info_height"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/info_sub_text_height"
+                    android:layout_gravity="right"
+                    android:text="ICAQ"
+                    android:textColor="@color/info_text_color"
+                    android:textSize="@dimen/info_text_size" />
+
+                <TextView
+                    android:id="@+id/flight_number"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="right"
+                    android:text="JAL"
+                    android:textColor="@color/info_text_color"
+                    android:textSize="25sp" />
+            </LinearLayout>
+
+            <!--current time-->
+            <LinearLayout
+                android:layout_width="@dimen/info_width"
+                android:layout_height="50dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/info_sub_text_height"
+                    android:layout_gravity="right"
+                    android:text="Current Time"
+                    android:textColor="@color/info_text_color"
+                    android:textSize="@dimen/info_text_size" />
+
+                <TextView
+                    android:id="@+id/current_time"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="right"
+                    android:text="11:00"
+                    android:textColor="@color/info_text_color"
+                    android:textSize="25sp" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
 
 
 </RelativeLayout>
