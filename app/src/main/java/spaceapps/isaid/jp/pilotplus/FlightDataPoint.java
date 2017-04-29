@@ -1,12 +1,13 @@
 package spaceapps.isaid.jp.pilotplus;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  * Created by iwsbrfts on 17/04/29.
  */
 
-public class FlightDataPoint implements Cloneable {
+public class FlightDataPoint implements Cloneable, Serializable {
     public long timestamp;
     public long waittime;
     public float lat;
@@ -15,6 +16,7 @@ public class FlightDataPoint implements Cloneable {
     public long speed; //スピード
     public long altitude; //高さ
     public int direction; //方向
+    public boolean isDummy = false;
 
     @Override
     public FlightDataPoint clone() {
@@ -31,6 +33,6 @@ public class FlightDataPoint implements Cloneable {
 
     @Override
     public String toString() {
-        return "time:" + timestamp + " lat:" + lat + " lon:" + lon + " direction:" + direction + " wait:" + waittime;
+        return "time:" + timestamp + " lat:" + lat + " lon:" + lon + " direction:" + direction + " wait:" + waittime + " isDummy:" + isDummy;
     }
 }

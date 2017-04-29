@@ -21,6 +21,9 @@ import java.util.Stack;
 public class Utils {
     private static final String TAG = Utils.class.getSimpleName();
 
+    private static final int TIME_DIVIDE = 20;
+    private static final int TIME_SPEED = 1000 / 100;
+
 
     public static  List<FlightDataPoint> loadCsv(Context context, String filename) {
 
@@ -84,29 +87,52 @@ public class Utils {
                 final float y = (distance / (time * 1f));
                 Log.d(TAG, "distance:" + distance + " waittime:" + time + " y:" + y);
 
-                if(y >= 100f) {
-                    final int x = (int) Math.ceil(time / 10);
+                if(y >= 200f) {
+                    final int count = (int) Math.floor(time / TIME_DIVIDE);
 
                     float floatLat = point.lat - old.lat;
-                    float diffLat = floatLat / x;
+                    float diffLat = floatLat / count;
 
                     float floatLon = point.lon - old.lon;
-                    float diffLon = floatLon / x;
+                    float diffLon = floatLon / count;
 
-                    Log.d(TAG,"diffLat:" + diffLat + " diffLon" + diffLon);
+                    Log.d(TAG, "x:" + count + " diffLat:" + diffLat + " diffLon" + diffLon);
 
-                    for(int a = 0; x < a; a++) {
-                        FlightDataPoint next = point.clone();
-                        next.timestamp = next.timestamp + (x * 10);
-                        next.waittime = 10 * 50;
-                        next.lat = next.lat + (diffLat * (x * 1f));
-                        next.lon = next.lon + (diffLon * (x + 1f));
+                    for(int i = 1, max = count + 1; i < max; i++) {
+                        Log.d(TAG, "a:" + i);
+
+                        FlightDataPoint next = old.clone();
+                        next.timestamp = next.timestamp + (i * TIME_DIVIDE);
+                        next.waittime = (next.timestamp - old.timestamp) * 50;
+                        next.lat = next.lat + (diffLat * (i * 1f));
+                        next.lon = next.lon + (diffLon * (i * 1f));
+
+                        next.isDummy = true;
+
+//                        if(point.lat < next.lat) {
+//                            break;
+//                        }
+//
+//                        if(point.lon < next.lon) {
+//                            break;
+//                        }
+
+                        if(point.timestamp < next.timestamp) {
+                            break;
+                        }
+
 
                         retData.add(next);
+
+                        old = next;
+
                     }
+
+                    time = (int)(point.timestamp - old.timestamp);
+
                 }
 
-                point.waittime = time * 50;
+                point.waittime = time * TIME_SPEED;
 
                 retData.add(point);
                 old = point;
