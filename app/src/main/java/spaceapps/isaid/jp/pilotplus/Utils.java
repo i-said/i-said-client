@@ -16,6 +16,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Stack;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Created by iwsbrfts on 17/04/29.
@@ -24,8 +27,8 @@ import java.util.Stack;
 public class Utils {
     private static final String TAG = Utils.class.getSimpleName();
 
-    private static final int TIME_DIVIDE = 20;
-    private static final int TIME_SPEED = 1000 / 100;
+    private static final int TIME_DIVIDE = 30;
+    private static final int TIME_SPEED = 1000 / 10;
 
 
     public static  List<FlightDataPoint> loadCsv(Context context, String filename) {
@@ -43,31 +46,7 @@ public class Utils {
 
     public static List<FlightDataPoint> loadCsv(InputStream in) {
         try {
-            List<FlightDataPoint> list = new LinkedList<>();
-            BufferedReader br = new BufferedReader(new InputStreamReader(in));
-            String line;
-
-            while ((line = br.readLine()) != null) {
-                if(line.contains("Timestamp"))continue;
-                line = line.replace("\"" , "" );
-                String[] data = line.split(",");
-
-                FlightDataPoint point = new FlightDataPoint();
-                point.timestamp = Long.valueOf(data[0]);
-                point.callSigne = data[2];
-                point.lat = Float.valueOf(data[3]);
-                point.lon = Float.valueOf(data[4]);
-                point.altitude = Long.valueOf(data[5]);
-                point.speed = Long.valueOf(data[6]);
-                point.direction = Integer.valueOf(data[7]);
-
-
-
-                list.add(point);
-
-            }
-
-            Collections.reverse(list);
+            List<FlightDataPoint> list = loadCsvReadAndReverse(in);
 
             List<FlightDataPoint> retData = new LinkedList<>();
 
@@ -81,16 +60,15 @@ public class Utils {
                 }
 
                 int time = (int)(point.timestamp - old.timestamp);
-
-                float[] results = new float[1];
+                float[] results = new float[3];
                 Location.distanceBetween(old.lat,old.lon,point.lat,point.lon,results);
 
                 final float distance = results[0];
-
                 final float y = (distance / (time * 1f));
                 Log.d(TAG, "distance:" + distance + " waittime:" + time + " y:" + y);
 
-                if(y >= 200f) {
+                if (time % TIME_DIVIDE > 1) {
+
                     final int count = (int) Math.floor(time / TIME_DIVIDE);
 
                     float floatLat = point.lat - old.lat;
@@ -101,29 +79,24 @@ public class Utils {
 
                     Log.d(TAG, "x:" + count + " diffLat:" + diffLat + " diffLon" + diffLon);
 
-                    for(int i = 1, max = count + 1; i < max; i++) {
-                        Log.d(TAG, "a:" + i);
+                    for (int i = 1, max = count + 1; i < max; i++) {
 
                         FlightDataPoint next = old.clone();
-                        next.timestamp = next.timestamp + (i * TIME_DIVIDE);
-                        next.waittime = (next.timestamp - old.timestamp) * 50;
-                        next.lat = next.lat + (diffLat * (i * 1f));
-                        next.lon = next.lon + (diffLon * (i * 1f));
+                        next.altitude = point.altitude;
+                        next.timestamp = next.timestamp + TIME_DIVIDE;
+                        next.waittime = (next.timestamp - old.timestamp) * TIME_SPEED;
+                        next.lat = next.lat + diffLat;
+                        next.lon = next.lon + diffLon;
+                        Location.distanceBetween(old.lat, old.lon, next.lat, next.lon, results);
+
+                        old.direction = (int) results[1];
 
                         next.isDummy = true;
-
-//                        if(point.lat < next.lat) {
-//                            break;
-//                        }
-//
-//                        if(point.lon < next.lon) {
-//                            break;
-//                        }
 
                         if(point.timestamp < next.timestamp) {
                             break;
                         }
-
+                        Log.d(TAG, next.toString());
 
                         retData.add(next);
 
@@ -131,19 +104,24 @@ public class Utils {
 
                     }
 
-                    time = (int)(point.timestamp - old.timestamp);
+
+                } else {
+                    point.waittime = time * TIME_SPEED;
+
+                    Location.distanceBetween(old.lat, old.lon, point.lat, point.lon, results);
+
+                    old.direction = (int) results[1];
+
+                    retData.add(point);
+                    old = point;
 
                 }
 
-                point.waittime = time * TIME_SPEED;
-
-                retData.add(point);
-                old = point;
 
             }
 
             return retData;
-        } catch(IOException e) {
+        } catch (Exception e) {
             Log.d(TAG,"failed", e);
         }
 
@@ -158,6 +136,111 @@ public class Utils {
     }
 
 
+    public static List<FlightDataPoint> loadCsvDummyData(InputStream in) {
+        List<FlightDataPoint> list = loadCsvReadAndReverse(in);
+
+        List<FlightDataPoint> retData = new LinkedList<>();
+
+        FlightDataPoint old = null;
+        for (FlightDataPoint point : list) {
+
+            if (old == null) {
+                old = point;
+                retData.add(point);
+                continue;
+            }
+
+            int time = (int) (point.timestamp - old.timestamp);
+            float[] results = new float[1];
+            Location.distanceBetween(old.lat, old.lon, point.lat, point.lon, results);
+
+            final float distance = results[0];
+            final float y = (distance / (time * 1f));
+            Log.d(TAG, "distance:" + distance + " waittime:" + time + " y:" + y);
+
+            final int count = (int) Math.floor(time / TIME_DIVIDE);
+
+            float floatLat = point.lat - old.lat;
+            float diffLat = floatLat / count;
+
+            float floatLon = point.lon - old.lon;
+            float diffLon = floatLon / count;
+
+            Log.d(TAG, "x:" + count + " diffLat:" + diffLat + " diffLon" + diffLon);
+
+            for (int i = 1, max = count + 1; i < max; i++) {
+
+                FlightDataPoint next = old.clone();
+                next.timestamp = next.timestamp + TIME_DIVIDE;
+                next.waittime = (next.timestamp - old.timestamp) * TIME_SPEED;
+                next.lat = next.lat + diffLat;
+                next.lon = next.lon + diffLon;
+
+                next.isDummy = true;
+
+//                        if(point.lat < next.lat) {
+//                            break;
+//                        }
+//
+//                        if(point.lon < next.lon) {
+//                            break;
+//                        }
+
+                if (point.timestamp < next.timestamp) {
+                    break;
+                }
+                Log.d(TAG, next.toString());
+
+                retData.add(next);
+
+                old = next;
+
+            }
+
+
+        }
+
+        return retData;
+
+
+    }
+
+
+    public static List<FlightDataPoint> loadCsvReadAndReverse(InputStream in) {
+        try {
+            List<FlightDataPoint> list = new LinkedList<>();
+            BufferedReader br = new BufferedReader(new InputStreamReader(in));
+            String line;
+
+            while ((line = br.readLine()) != null) {
+                if (line.contains("Timestamp")) continue;
+                line = line.replace("\"", "");
+                String[] data = line.split(",");
+
+                FlightDataPoint point = new FlightDataPoint();
+                point.timestamp = Long.valueOf(data[0]);
+                point.callSigne = data[2];
+                point.lat = Float.valueOf(data[3]);
+                point.lon = Float.valueOf(data[4]);
+                point.altitude = Long.valueOf(data[5]);
+                point.speed = Long.valueOf(data[6]);
+                point.direction = Integer.valueOf(data[7]);
+
+
+                list.add(point);
+
+            }
+
+            Collections.reverse(list);
+
+            return list;
+
+        } catch (IOException e) {
+            Log.d(TAG, "failed", e);
+        }
+
+        return null;
+    }
 
 
 
