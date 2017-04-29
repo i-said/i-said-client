@@ -20,7 +20,7 @@ public class Utils {
     private static final String TAG = Utils.class.getSimpleName();
 
     private static final int TIME_DIVIDE = 30;
-    private static final int TIME_SPEED = 1000 / 100;
+    private static final int TIME_SPEED = 1000 / 10;
 
 
     public static  List<FlightDataPoint> loadCsv(Context context, String filename) {
@@ -52,7 +52,7 @@ public class Utils {
                 }
 
                 int time = (int)(point.timestamp - old.timestamp);
-                float[] results = new float[1];
+                float[] results = new float[3];
                 Location.distanceBetween(old.lat,old.lon,point.lat,point.lon,results);
 
                 final float distance = results[0];
@@ -74,10 +74,14 @@ public class Utils {
                     for (int i = 1, max = count + 1; i < max; i++) {
 
                         FlightDataPoint next = old.clone();
+                        next.altitude = point.altitude;
                         next.timestamp = next.timestamp + TIME_DIVIDE;
                         next.waittime = (next.timestamp - old.timestamp) * TIME_SPEED;
                         next.lat = next.lat + diffLat;
                         next.lon = next.lon + diffLon;
+                        Location.distanceBetween(old.lat, old.lon, next.lat, next.lon, results);
+
+                        old.direction = (int) results[1];
 
                         next.isDummy = true;
 
@@ -95,6 +99,10 @@ public class Utils {
 
                 } else {
                     point.waittime = time * TIME_SPEED;
+
+                    Location.distanceBetween(old.lat, old.lon, point.lat, point.lon, results);
+
+                    old.direction = (int) results[1];
 
                     retData.add(point);
                     old = point;

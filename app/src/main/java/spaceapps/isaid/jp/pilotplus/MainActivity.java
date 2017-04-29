@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.WorkerThread;
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 
@@ -33,7 +32,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     private Marker mAirplaneMarker = null;
 
     private List<FlightDataPoint> mList;
-    private boolean mIsAuto = false;
+    private boolean mIsAuto = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -169,14 +168,15 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             if(mMax <= mCurrent) return;
             FlightDataPoint point =  mData.get(mCurrent);
 
-            int mNext = mCurrent + 4;
-
-            if (mNext >= mMax) {
-                mNext = mMax - 1;
-            }
-
-            FlightDataPoint nextPoint = mData.get(mNext);
-            Log.d(TAG,"wait:" + point.toString());
+//            int mNext = mCurrent + 4;
+//
+//            if (mNext >= mMax) {
+//                mNext = mMax - 1;
+//            }
+//
+//            FlightDataPoint nextPoint = mData.get(mNext);
+//            Log.d(TAG,"wait:" + point.toString());
+//            LatLng nextLatLon = new LatLng(nextPoint.lat, nextPoint.lon);
 
 
             LatLng nowLatLon = new LatLng(point.lat,point.lon);
@@ -216,8 +216,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
 
             if(mIsAuto) {
-                LatLng nextLatLon = new LatLng(nextPoint.lat, nextPoint.lon);
-                animateCamera(nextPoint);
+                animateCamera(point);
                 //            mMap.moveCamera(CameraUpdateFactory.zoomTo(zoom));
             }
 
@@ -236,7 +235,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         cpBuilder.bearing(point.direction);
         cpBuilder.target(nowLatLon);
         cpBuilder.tilt(60);
-        cpBuilder.zoom(10f);
+        cpBuilder.zoom(15f);
 
         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cpBuilder.build()));
     }
