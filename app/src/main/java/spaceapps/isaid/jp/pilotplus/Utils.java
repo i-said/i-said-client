@@ -26,7 +26,7 @@ import java.util.Locale;
 public class Utils {
     private static final String TAG = Utils.class.getSimpleName();
 
-    private static final int TIME_DIVIDE = 10;
+    private static final int TIME_DIVIDE = 30;
     private static final int TIME_SPEED = 1000;
 
 
