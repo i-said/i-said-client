@@ -91,6 +91,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 new OkHttpUrlLoader.Factory(mOkHttpClient));
 
 
+        ((TextView) findViewById(R.id.flight_number)).setText(mAirplaneName);
     }
 
 
@@ -357,7 +358,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             Log.d(TAG, timeStr);
 
             if (mSpeedInfoView !=null) {
-                mSpeedInfoView.setText(Integer.toString((int) speed));
+                int knot = (int) (speed / 1.852);
+                mSpeedInfoView.setText(Integer.toString((int) knot));
             }
             if (mAltitudeInfoView !=null) {
                 mAltitudeInfoView.setText(Integer.toString((int) altitude));
