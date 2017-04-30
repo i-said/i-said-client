@@ -14,12 +14,15 @@
 
 
     <ImageButton
+        android:layout_marginBottom="20dp"
+        android:layout_marginRight="20dp"
         android:id="@+id/btn_auto"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:src="@drawable/scalepin_xx" />
+        android:background="@null"
+        android:src="@drawable/heading_btn" />
 
     <!--topbar-->
     <LinearLayout
@@ -69,10 +72,10 @@
                         android:layout_height="match_parent"
                         android:layout_gravity="right"
                         android:text="0"
-                        android:textStyle="bold"
                         android:textAlignment="center"
                         android:textColor="@color/info_text_color"
-                        android:textSize="20sp" />
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -84,8 +87,8 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginTop="@dimen/st_unit"
                     android:layout_marginBottom="@dimen/st_unit"
+                    android:layout_marginTop="@dimen/st_unit"
                     android:background="@drawable/frame"
                     android:orientation="vertical">
 
@@ -104,10 +107,10 @@
                         android:layout_height="match_parent"
                         android:layout_gravity="right"
                         android:text="0"
-                        android:textStyle="bold"
                         android:textAlignment="center"
                         android:textColor="@color/info_text_color"
-                        android:textSize="20sp" />
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -155,27 +158,28 @@
                     android:textSize="@dimen/info_text_size" />
 
                 <TextView
-                    android:textStyle="bold"
                     android:id="@+id/current_time"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="right"
                     android:text="--:--"
                     android:textColor="@color/info_text_color"
-                    android:textSize="25sp" />
+                    android:textSize="25sp"
+                    android:textStyle="bold" />
             </LinearLayout>
         </LinearLayout>
-        
-        
+
+
     </LinearLayout>
+
     <ImageView
-        android:layout_marginLeft="24dp"
-        android:layout_marginBottom="24dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:src="@drawable/scale_xx"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_marginBottom="24dp"
+        android:layout_marginLeft="24dp"
+        android:src="@drawable/scale_xx" />
 </RelativeLayout>
 
 

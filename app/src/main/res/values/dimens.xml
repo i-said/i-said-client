@@ -3,7 +3,7 @@
     <dimen name="st_unit4">4dp</dimen>
     <dimen name="st_unit">10dp</dimen>
     <dimen name="info_box_margin">12dp</dimen>
-    <dimen name="info_height">70dp</dimen>
+    <dimen name="info_height">65dp</dimen>
     <dimen name="info_top_bar_margin_top">14dp</dimen>
     <dimen name="info_sub_text_height">20dp</dimen>
     <dimen name="info_width">90dp</dimen>
