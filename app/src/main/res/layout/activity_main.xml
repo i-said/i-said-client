@@ -152,8 +152,7 @@
                     android:layout_marginTop="@dimen/info_top_bar_margin_top"
                     android:text="Current Time"
                     android:textColor="@color/info_text_color"
-                    android:textSize="@dimen/info_text_size"
-                    android:textStyle="bold" />
+                    android:textSize="@dimen/info_text_size" />
 
                 <TextView
                     android:textStyle="bold"
@@ -166,9 +165,17 @@
                     android:textSize="25sp" />
             </LinearLayout>
         </LinearLayout>
+        
+        
     </LinearLayout>
-
-
+    <ImageView
+        android:layout_marginLeft="24dp"
+        android:layout_marginBottom="24dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:src="@drawable/scale_xx"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 </RelativeLayout>
 
 
