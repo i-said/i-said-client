@@ -71,7 +71,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
         Intent intent = getIntent();
         mAirplaneName = intent.getStringExtra(EXTRA_AIRPLANE);
-
+        ((TextView)findViewById(R.id.flight_number)).setText(mAirplaneName);
     }
 
 
