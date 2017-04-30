@@ -21,10 +21,11 @@
         android:layout_alignParentRight="true"
         android:src="@drawable/scalepin_xx" />
 
+    <!--topbar-->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/info_height"
-        android:background="#99000000"
+        <!--android:background="#99000000"-->
         android:orientation="horizontal"
         android:paddingLeft="@dimen/info_top_bar_margin_top">
 
@@ -43,55 +44,69 @@
             <LinearLayout
                 android:layout_width="@dimen/info_width"
                 android:layout_height="@dimen/info_height"
-                android:background="@drawable/frame"
                 android:orientation="vertical">
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/info_sub_text_height"
-                    android:layout_gravity="right"
-                    android:layout_marginLeft="@dimen/st_unit8"
-                    android:layout_marginTop="@dimen/info_top_bar_margin_top"
-                    android:text="Speed"
-                    android:textColor="@color/info_text_color"
-                    android:textSize="@dimen/info_text_size" />
-
-                <TextView
-                    android:id="@+id/speed"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_gravity="right"
-                    android:text="600"
-                    android:textAlignment="center"
-                    android:textColor="@color/info_text_color"
-                    android:textSize="20sp" />
+                    android:layout_marginBottom="@dimen/st_unit"
+                    android:layout_marginTop="@dimen/st_unit"
+                    android:background="@drawable/frame"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/info_sub_text_height"
+                        android:layout_gravity="right"
+                        android:layout_marginLeft="@dimen/st_unit"
+                        android:text="Speed"
+                        android:textColor="@color/info_text_color"
+                        android:textSize="@dimen/info_text_size" />
+
+                    <TextView
+                        android:id="@+id/speed"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="right"
+                        android:text="600"
+                        android:textAlignment="center"
+                        android:textColor="@color/info_text_color"
+                        android:textSize="20sp" />
+                </LinearLayout>
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="@dimen/info_width"
                 android:layout_height="@dimen/info_height"
-                android:background="@drawable/frame"
                 android:orientation="vertical">
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/info_sub_text_height"
-                    android:layout_gravity="right"
-                    android:layout_marginLeft="@dimen/st_unit8"
-                    android:layout_marginTop="@dimen/info_top_bar_margin_top"
-                    android:text="Meter"
-                    android:textColor="@color/info_text_color"
-                    android:textSize="@dimen/info_text_size" />
-
-                <TextView
-                    android:id="@+id/Meter"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_gravity="right"
-                    android:text="0"
-                    android:textAlignment="center"
-                    android:textColor="@color/info_text_color"
-                    android:textSize="20sp" />
+                    android:layout_marginTop="@dimen/st_unit"
+                    android:layout_marginBottom="@dimen/st_unit"
+                    android:background="@drawable/frame"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/info_sub_text_height"
+                        android:layout_gravity="right"
+                        android:layout_marginLeft="@dimen/st_unit"
+                        android:text="Meter"
+                        android:textColor="@color/info_text_color"
+                        android:textSize="@dimen/info_text_size" />
+
+                    <TextView
+                        android:id="@+id/Meter"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="right"
+                        android:text="0"
+                        android:textAlignment="center"
+                        android:textColor="@color/info_text_color"
+                        android:textSize="20sp" />
+                </LinearLayout>
             </LinearLayout>
 
 
@@ -99,7 +114,7 @@
             <LinearLayout
                 android:layout_width="@dimen/info_width"
                 android:layout_height="@dimen/info_height"
-                android:layout_marginLeft="@dimen/st_unit8"
+                android:layout_marginLeft="16dp"
                 android:orientation="vertical">
 
                 <TextView
@@ -139,6 +154,7 @@
                     android:textStyle="bold" />
 
                 <TextView
+                    android:textStyle="bold"
                     android:id="@+id/current_time"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
