@@ -14,6 +14,9 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.integration.okhttp.OkHttpUrlLoader;
+import com.bumptech.glide.load.model.GlideUrl;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -25,9 +28,11 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.koushikdutta.async.future.FutureCallback;
-import com.squareup.picasso.Picasso;
+import com.squareup.okhttp.OkHttpClient;
 
+import java.io.InputStream;
 import java.util.List;
+
 
 
 public class MainActivity extends FragmentActivity implements OnMapReadyCallback {
@@ -40,7 +45,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
     private SparseArray mMarkerArray = new SparseArray();
 
-
+    private OkHttpClient mOkHttpClient;
     private Marker mAirplaneMarker = null;
 
     private List<FlightDataPoint> mList;
@@ -76,6 +81,15 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
         Intent intent = getIntent();
         mAirplaneName = intent.getStringExtra(EXTRA_AIRPLANE);
+
+
+        mOkHttpClient = new OkHttpClient();
+        mOkHttpClient.setFollowRedirects(true);
+        mOkHttpClient.setFollowSslRedirects(true);
+
+        Glide.get(this).register(GlideUrl.class, InputStream.class,
+                new OkHttpUrlLoader.Factory(mOkHttpClient));
+
 
     }
 
@@ -127,9 +141,16 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
                 Log.d(TAG, "o:" + o.getClass());
                 PoiData poi = (PoiData) o;
-                View view = getLayoutInflater().inflate(R.layout.image_info_window, null);
-                ImageView image = (ImageView) view.findViewById(R.id.image);
-                Picasso.with(MainActivity.this).load(poi.image).into(image);
+                final View view = getLayoutInflater().inflate(R.layout.image_info_window, null);
+                final ImageView image = (ImageView) view.findViewById(R.id.image);
+                Log.d(TAG, "view:" + view + " image:" + image);
+
+                Glide.with(MainActivity.this)
+                        .load(poi.image)
+                        .placeholder(R.drawable.dummy)
+                        .error(R.drawable.dummy)
+                        .into(image);
+
                 return view;
             }
         });
