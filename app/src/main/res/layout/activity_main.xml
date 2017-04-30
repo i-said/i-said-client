@@ -99,7 +99,7 @@
                         android:textSize="@dimen/info_text_size" />
 
                     <TextView
-                        android:id="@+id/Meter"
+                        android:id="@+id/meter"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_gravity="right"
