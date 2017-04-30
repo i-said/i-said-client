@@ -66,7 +66,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         });
 
         mSpeedInfoView = (TextView) findViewById(R.id.speed);
-        mAltitudeInfoView = (TextView) findViewById(R.id.feet);
+        mAltitudeInfoView = (TextView) findViewById(R.id.meter);
         mCurrentTimeInfoView = (TextView) findViewById(R.id.current_time);
 
         Intent intent = getIntent();
