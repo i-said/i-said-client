@@ -133,7 +133,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="right"
-                    android:text="JAL"
+                    android:text="JAL609"
                     android:textColor="@color/info_text_color"
                     android:textSize="25sp"
                     android:textStyle="bold" />
