@@ -5,24 +5,65 @@
     android:layout_height="match_parent"
     tools:context="spaceapps.isaid.jp.pilotplus.FirstActivity">
 
-    <LinearLayout
-        android:orientation="horizontal"
+    <android.support.v7.widget.AppCompatImageView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:src="@drawable/form_bg_image" />
 
-        <android.support.v7.widget.AppCompatSpinner
-            android:layout_centerInParent="true"
-            android:id="@+id/spinner"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/info_height"
+        android:background="@drawable/topbar_pattern"
+        android:orientation="horizontal"
+        android:paddingLeft="@dimen/info_top_bar_margin_top">
 
-        <android.support.v7.widget.AppCompatButton
-            android:id="@+id/btn_next"
-            android:text="NEXT"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+        <ImageView
+            android:layout_width="250dp"
+            android:layout_height="@dimen/info_height"
+            android:gravity="center_vertical"
+            android:src="@drawable/logo"
+            android:textColor="@color/info_text_color" />
     </LinearLayout>
 
+    <RelativeLayout
+        android:layout_width="400dp"
+        android:layout_height="220dp"
+        android:layout_centerInParent="true"
+        android:background="@drawable/topbar_pattern">
 
+        <LinearLayout
+            android:layout_margin="30dp"
+            android:layout_centerInParent="true"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <android.support.v7.widget.AppCompatImageView
+                android:src="@drawable/form_txt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <android.support.v7.widget.AppCompatSpinner
+                    android:id="@+id/spinner"
+                    android:layout_width="230dp"
+                    android:layout_height="40dp"
+                    android:layout_centerInParent="true"
+                    android:layout_weight="1"
+                    android:background="@android:color/white" />
+
+                <android.support.v7.widget.AppCompatImageButton
+                    android:id="@+id/btn_next"
+                    android:layout_width="75dp"
+                    android:layout_height="40dp"
+                    android:background="@color/info_text_color"
+                    android:src="@drawable/search_icon" />
+            </LinearLayout>
+        </LinearLayout>
+    </RelativeLayout>
 </RelativeLayout>
