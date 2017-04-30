@@ -159,9 +159,10 @@ public class Utils {
 
 
     public static void getDataList(Context context, float lat, float lon, FutureCallback<List<PoiData>> callback) {
-
+        String url = "https://spaceapp-i-said.mybluemix.net/api/poi-sample?lat=" + lat + "&lng=" + lon;
+        Log.d(TAG, "url:" + url);
         Ion.with(context)
-                .load("https://spaceapp-i-said.mybluemix.net/api/poi-sample2?lat=" + lat + "&lon=" + lon)
+                .load(url)
                 .as(new TypeToken<List<PoiData>>() {
                 })
                 .setCallback(callback);

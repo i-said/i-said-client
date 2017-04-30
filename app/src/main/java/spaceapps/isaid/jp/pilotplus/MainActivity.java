@@ -8,10 +8,15 @@ import android.os.Handler;
 import android.support.annotation.WorkerThread;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.integration.okhttp.OkHttpUrlLoader;
+import com.bumptech.glide.load.model.GlideUrl;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -23,8 +28,11 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.koushikdutta.async.future.FutureCallback;
+import com.squareup.okhttp.OkHttpClient;
 
+import java.io.InputStream;
 import java.util.List;
+
 
 
 public class MainActivity extends FragmentActivity implements OnMapReadyCallback {
@@ -35,7 +43,9 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     private GoogleMap mMap;
     private ImageButton mImageButton;
 
+    private SparseArray mMarkerArray = new SparseArray();
 
+    private OkHttpClient mOkHttpClient;
     private Marker mAirplaneMarker = null;
 
     private List<FlightDataPoint> mList;
@@ -71,7 +81,17 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
         Intent intent = getIntent();
         mAirplaneName = intent.getStringExtra(EXTRA_AIRPLANE);
-        ((TextView)findViewById(R.id.flight_number)).setText(mAirplaneName);
+
+
+        mOkHttpClient = new OkHttpClient();
+        mOkHttpClient.setFollowRedirects(true);
+        mOkHttpClient.setFollowSslRedirects(true);
+
+        Glide.get(this).register(GlideUrl.class, InputStream.class,
+                new OkHttpUrlLoader.Factory(mOkHttpClient));
+
+
+        ((TextView) findViewById(R.id.flight_number)).setText(mAirplaneName);
     }
 
 
@@ -99,6 +119,65 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
 
         task.execute();
+
+        mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+            @Override
+            public View getInfoWindow(Marker marker) {
+                return null;
+            }
+
+            @Override
+            public View getInfoContents(Marker marker) {
+                Log.d(TAG, "getInfoContents:" + marker.hashCode());
+
+                Object o = marker.getTag();
+                Log.d(TAG, "o:" + o);
+                if (o == null) {
+                    return null;
+                }
+
+                if (!(o instanceof PoiData)) {
+                    return null;
+                }
+
+                Log.d(TAG, "o:" + o.getClass());
+                PoiData poi = (PoiData) o;
+                final View view = getLayoutInflater().inflate(R.layout.image_info_window, null);
+                final ImageView image = (ImageView) view.findViewById(R.id.image);
+                Log.d(TAG, "view:" + view + " image:" + image);
+
+                Glide.with(MainActivity.this)
+                        .load(poi.image)
+                        .placeholder(R.drawable.dummy)
+                        .error(R.drawable.dummy)
+                        .into(image);
+
+                return view;
+            }
+        });
+
+//        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+//            @Override
+//            public boolean onMarkerClick(Marker marker) {
+//                marker.showInfoWindow();
+//                return true;
+//            }
+//        });
+
+//        mMap.setInfoWindowAdapter(new InfoWindowAdapter() {
+//　　　　　　　　@Override
+//　　　　　　　　public View getInfoContents(Marker marker) {
+//　　　　　　　　　　// TODO Auto-generated method stub
+//　　　　　　　　　　View view = getLayoutInflater().inflate(R.layout.info_window, null);
+//　　　　　　　　　　// タイトル設定
+//　　　　　　　　　　TextView title = (TextView)view.findViewById(R.id.info_title);
+//　　　　　　　　　　title.setText(marker.getTitle());
+//　　　　　　　　　　// 画像設定
+//　　　　　　　　　　ImageView img = (ImageView)view.findViewById(R.id.info_image);
+//　　　　　　　　　　img.setImageResource(R.drawable.rokkosan);
+//　　　　　　　　　　return view;
+//　　　　　　　　}
+
     }
 
     @Override
@@ -120,13 +199,25 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
     }
-
     private void addMarker(final LatLng latlng ,final  String title) {
+        addMarker(latlng, title, null);
+    }
+
+    private void addMarker(final LatLng latlng, final String title, final PoiData poiData) {
         mHandler.post(new Runnable() {
             @Override
             public void run() {
-                MarkerOptions options = new MarkerOptions().position(latlng).title(title);
-                mMap.addMarker(options);
+                MarkerOptions options = new MarkerOptions()
+                        .position(latlng)
+                        .title(title)
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.pin));
+                Marker marker = mMap.addMarker(options);
+                marker.setTag(poiData);
+
+                if (poiData != null) {
+                    mMarkerArray.append(marker.hashCode(), poiData);
+                }
+
             }
         });
     }
@@ -178,7 +269,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         private Marker mOldMarker = null;
         private List<FlightDataPoint> mData;
         private int mMax = 0;
-        private int mCurrent = 1;
+        private int mCurrent = 0;
 
         public CameraRunnable(List<FlightDataPoint> data) {
             mData = data;
@@ -239,13 +330,16 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 animateCamera(nextPoint, point.direction, zoom);
                 //            mMap.moveCamera(CameraUpdateFactory.zoomTo(zoom));
             }
-            if (!point.isDummy) {
+
+            if (mCurrent == 0 || mCurrent % 5 == 0) {
                 Utils.getDataList(getApplicationContext(), point.lat, point.lon, new FutureCallback<List<PoiData>>() {
                     @Override
                     public void onCompleted(Exception e, List<PoiData> pois) {
                         if (pois == null) return;
                         for (PoiData data : pois) {
-                            addMarker(new LatLng(data.lat, data.lng), data.name);
+                            Log.d(TAG, "name:" + data.name + " lat:" + data.lat + " lng:" + data.lng + " url:" + data.image);
+
+                            addMarker(new LatLng(data.lat, data.lng), data.name, data);
                         }
                     }
                 });
@@ -264,7 +358,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             Log.d(TAG, timeStr);
 
             if (mSpeedInfoView !=null) {
-                int knot = (int) (speed/ 1.852);
+                int knot = (int) (speed / 1.852);
                 mSpeedInfoView.setText(Integer.toString((int) knot));
             }
             if (mAltitudeInfoView !=null) {
@@ -314,75 +408,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
 
-//    private void addKML(String filename) {
-//
-//        try {
-//
-//
-//            KmlLayer layer = new KmlLayer(mMap,getAssets().open(filename), getApplicationContext());
-//            layer.addLayerToMap();
-//
-//            for(KmlPlacemark placemark : layer.getPlacemarks()) {
-//                Geometry geometry = placemark.getGeometry();
-//                Log.d(TAG,"geometry:" + geometry.getClass().getName());
-//                if(geometry instanceof KmlPoint) {
-//                    KmlPoint point = (KmlPoint) geometry;
-//
-//                    mMap.addMarker(new MarkerOptions().position(point.getGeometryObject()).title("aaa:" + point.getGeometryObject().toString()));
-//                }
-//            }
-//
-//
-//
-////
-////            for(KmlContainer container : layer.getContainers()) {
-////                Log.d(TAG,"container:" + container);
-////                for(KmlPlacemark placemark : container.getPlacemarks()) {
-////                    Geometry geometry = placemark.getGeometry();
-////                    Log.d(TAG,"geometry:" + geometry.getClass().getName());
-////                    if(geometry instanceof KmlPoint) {
-////                        KmlPoint point = (KmlPoint) geometry;
-////
-////                        mMap.addMarker(new MarkerOptions().position(point.getGeometryObject()).title("aaa:" + point.getGeometryObject().toString()));
-////                    }
-////                }
-////            }
-//
-//            layer.removeLayerFromMap();
-//
-//
-//        } catch(IOException e) {
-//            Log.d(TAG,"failed", e);
-//        } catch (XmlPullParserException e) {
-//            Log.d(TAG,"failed", e);
-//        }
-//
-//
-//
-//    }
-
-
-//    private void moveCameraToKml(KmlLayer kmlLayer) {
-//        //Retrieve the first container in the KML layer
-//        KmlContainer container = kmlLayer.getContainers().iterator().next();
-//        //Retrieve a nested container within the first container
-//        container = container.getContainers().iterator().next();
-//        //Retrieve the first placemark in the nested container
-//        KmlPlacemark placemark = container.getPlacemarks().iterator().next();
-//        //Retrieve a polygon object in a placemark
-//        KmlPolygon polygon = (KmlPolygon) placemark.getGeometry();
-//        //Create LatLngBounds of the outer coordinates of the polygon
-//        LatLngBounds.Builder builder = new LatLngBounds.Builder();
-//        for (LatLng latLng : polygon.getOuterBoundaryCoordinates()) {
-//            builder.include(latLng);
-//        }
-//
-//        int width = getResources().getDisplayMetrics().widthPixels;
-//        int height = getResources().getDisplayMetrics().heightPixels;
-//        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), width, height, 1));
-//    }
-
-
     private Handler mHandler = new Handler();
 
 
@@ -428,6 +453,13 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
     };
 
+
+    private GoogleMap.OnInfoWindowClickListener mOnInfoWindowClickListener = new GoogleMap.OnInfoWindowClickListener() {
+        @Override
+        public void onInfoWindowClick(Marker marker) {
+
+        }
+    };
 
 
 }
