@@ -25,7 +25,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/info_height"
-        <!--android:background="#99000000"-->
+        android:background="@drawable/topbar_pattern"
         android:orientation="horizontal"
         android:paddingLeft="@dimen/info_top_bar_margin_top">
 
@@ -68,7 +68,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_gravity="right"
-                        android:text="600"
+                        android:text="0"
+                        android:textStyle="bold"
                         android:textAlignment="center"
                         android:textColor="@color/info_text_color"
                         android:textSize="20sp" />
@@ -103,6 +104,7 @@
                         android:layout_height="match_parent"
                         android:layout_gravity="right"
                         android:text="0"
+                        android:textStyle="bold"
                         android:textAlignment="center"
                         android:textColor="@color/info_text_color"
                         android:textSize="20sp" />
