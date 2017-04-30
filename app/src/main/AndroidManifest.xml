@@ -30,14 +30,19 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:screenOrientation="landscape"
             android:name=".MainActivity"
+            android:screenOrientation="landscape">
+        </activity>
+        <activity
+            android:name=".FirstActivity"
+            android:screenOrientation="landscape"
             android:label="@string/title_activity_main">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
         </activity>
     </application>
 
