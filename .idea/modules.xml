@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/i-said-clinet.iml" filepath="$PROJECT_DIR$/i-said-clinet.iml" />
+      <module fileurl="file://$PROJECT_DIR$/pilotplus.iml" filepath="$PROJECT_DIR$/pilotplus.iml" />
     </modules>
   </component>
 </project>
