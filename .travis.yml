@@ -1,14 +1,18 @@
 language: android
+
 env:
   global:
   - secure: hogeohge
   - secure: EmyzU6mp3fPDyWyqYYt9BUmwSiIHUIz1hdmJA0nM7cWsuafcfAUev7zFRiO636FUQOJ49a7IDBKEHNdlbzqDuXTYxi5G4tHNTwazPV11N2j9/mYRExr4KvWTrOVoWOMUtaVjvPLFAFcPx8tgNKBD86TRO+Z42XnbUL+bdOIbwbveJPR+l1m91au1O0vLehlSViGfWtbNKKH4e/Q9XHkyyM1tzx0jUvG143bxhtUDgJZj0Q8Fp3RcwXY39nT+4AGjwiRjCEKZPu45MJbmMARfsASTALMJoSWzV2fvY9ps0AVONE7LdPM1joh21G8zrYEkB4pPedrbpWg8+y6uwZn75Ca1mClrqO4/jRAGuCXEitRHGKBMRo7x2kfXId1lV+J7WEa0cppRJ+ZgvOVOaEBqy0fiDTyKkzDFfOdq7FDhQBUTum+ZkplhGMzZnWev5s1fLUvKOfc0Hx26blkRbIXJlrxUXkWeYc/cwmWkwNHVFIuuqEdbtCqczxJfWZp2iVDfaosQoXVVh2FaGq4Nuxk4i2ANLZbrEDJ9ko0Kg4QNCTgg3Gxu9DXGrDuypEOa512l5OVXkQ8ScpfXWKnyP4KksASmWgoCpxu83sNd055A7EXeLd+l+sMrON0rH93azm4kYVacMoN0NPiUlVFzHQOpkwlHWhwLwCfWM2BEE/mN2KI=
+
 jdk:
   - oraclejdk8
+
 before_install:
   - mkdir "$ANDROID_HOME/licenses" || true
   - echo -e "\n8933bad161af4178b1185d1a37fbf41ea5269c55" > "$ANDROID_HOME/licenses/android-sdk-license"
   - echo -e "\n84831b9409646a918e30573bab4c9c91346d8abd" > "$ANDROID_HOME/licenses/android-sdk-preview-license"
+
 android:
   components:
     - build-tools-25.0.2
@@ -19,8 +23,10 @@ android:
     - extra-android-m2repository
     - addon-google_apis-google-25
     - sysimg-25
+
 script:
 - "./gradlew assembleDebug"
+
 after_success:
 - curl -F "file=@./app/build/apk/app-debug-unaligned.apk" -F "token=${DEPLOYGATE_TOKEN}"
   -F "DeployGate Update" https://deploygate.com/api/users/kilisima/apps
