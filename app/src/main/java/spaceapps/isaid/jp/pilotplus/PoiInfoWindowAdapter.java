@@ -15,17 +15,16 @@ import com.bumptech.glide.request.target.Target;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.Marker;
 
+import java.util.Objects;
+
 
 public class PoiInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
     private static final String TAG = "poiInfo";
     @NonNull
     private final Context mContext;
 
-    public PoiInfoWindowAdapter(@NonNull Context context) {
-        if (context == null) {
-            throw new NullPointerException("Require Non null object");
-        }
-        mContext = context;
+    PoiInfoWindowAdapter(Context context) {
+        mContext = Objects.requireNonNull(context);
     }
 
 
