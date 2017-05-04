@@ -11,7 +11,6 @@ import android.util.Log;
 import android.util.SparseArray;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -120,64 +119,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
         task.execute();
 
-        mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
-            @Override
-            public View getInfoWindow(Marker marker) {
-                return null;
-            }
-
-            @Override
-            public View getInfoContents(Marker marker) {
-                Log.d(TAG, "getInfoContents:" + marker.hashCode());
-
-                Object o = marker.getTag();
-                Log.d(TAG, "o:" + o);
-                if (o == null) {
-                    return null;
-                }
-
-                if (!(o instanceof PoiData)) {
-                    return null;
-                }
-
-                Log.d(TAG, "o:" + o.getClass());
-                PoiData poi = (PoiData) o;
-                final View view = getLayoutInflater().inflate(R.layout.image_info_window, null);
-                final ImageView image = (ImageView) view.findViewById(R.id.image);
-                Log.d(TAG, "view:" + view + " image:" + image);
-
-                Glide.with(MainActivity.this)
-                        .load(poi.image)
-                        .placeholder(R.drawable.dummy)
-                        .error(R.drawable.dummy)
-                        .into(image);
-
-                return view;
-            }
-        });
-
-//        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-//            @Override
-//            public boolean onMarkerClick(Marker marker) {
-//                marker.showInfoWindow();
-//                return true;
-//            }
-//        });
-
-//        mMap.setInfoWindowAdapter(new InfoWindowAdapter() {
-//　　　　　　　　@Override
-//　　　　　　　　public View getInfoContents(Marker marker) {
-//　　　　　　　　　　// TODO Auto-generated method stub
-//　　　　　　　　　　View view = getLayoutInflater().inflate(R.layout.info_window, null);
-//　　　　　　　　　　// タイトル設定
-//　　　　　　　　　　TextView title = (TextView)view.findViewById(R.id.info_title);
-//　　　　　　　　　　title.setText(marker.getTitle());
-//　　　　　　　　　　// 画像設定
-//　　　　　　　　　　ImageView img = (ImageView)view.findViewById(R.id.info_image);
-//　　　　　　　　　　img.setImageResource(R.drawable.rokkosan);
-//　　　　　　　　　　return view;
-//　　　　　　　　}
-
+        mMap.setInfoWindowAdapter(new PoiInfoWindowAdapter(getApplicationContext()));
     }
 
     @Override
