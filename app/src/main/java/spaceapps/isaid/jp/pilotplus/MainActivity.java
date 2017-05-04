@@ -1,6 +1,7 @@
 package spaceapps.isaid.jp.pilotplus;
 
 import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -32,6 +33,7 @@ import com.squareup.okhttp.OkHttpClient;
 import java.io.InputStream;
 import java.util.List;
 
+import spaceapps.isaid.jp.pilotplus.databinding.ActivityMainBinding;
 
 
 public class MainActivity extends FragmentActivity implements OnMapReadyCallback {
@@ -55,17 +57,20 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     private TextView mSpeedInfoView;
     private TextView mAltitudeInfoView;
     private TextView mCurrentTimeInfoView;
+    private ActivityMainBinding mBinding;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        mImageButton = (ImageButton) findViewById(R.id.btn_auto);
+        mImageButton = mBinding.btnAuto;
         mImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -74,9 +79,9 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
-        mSpeedInfoView = (TextView) findViewById(R.id.speed);
-        mAltitudeInfoView = (TextView) findViewById(R.id.meter);
-        mCurrentTimeInfoView = (TextView) findViewById(R.id.current_time);
+        mSpeedInfoView = mBinding.speed;
+        mAltitudeInfoView = mBinding.meter;
+        mCurrentTimeInfoView = mBinding.currentTime;
 
         Intent intent = getIntent();
         mAirplaneName = intent.getStringExtra(EXTRA_AIRPLANE);
@@ -89,8 +94,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         Glide.get(this).register(GlideUrl.class, InputStream.class,
                 new OkHttpUrlLoader.Factory(mOkHttpClient));
 
-
-        ((TextView) findViewById(R.id.flight_number)).setText(mAirplaneName);
+        mBinding.flightNumber.setText(mAirplaneName);
     }
 
 

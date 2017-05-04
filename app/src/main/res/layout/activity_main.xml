@@ -1,188 +1,192 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<layout>
 
-
-    <fragment
-        android:id="@+id/map"
-        android:name="com.google.android.gms.maps.SupportMapFragment"
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context="spaceapps.isaid.jp.pilotplus.MainActivity" />
+        android:layout_height="match_parent">
 
 
-    <ImageButton
-        android:layout_marginBottom="20dp"
-        android:layout_marginRight="20dp"
-        android:id="@+id/btn_auto"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:background="@null"
-        android:src="@drawable/heading_btn" />
+        <fragment
+            android:id="@+id/map"
+            class="com.google.android.gms.maps.SupportMapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context="spaceapps.isaid.jp.pilotplus.MainActivity" />
 
-    <!--topbar-->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/info_height"
-        android:background="@drawable/topbar_pattern"
-        android:orientation="horizontal"
-        android:paddingLeft="@dimen/info_top_bar_margin_top">
 
-        <ImageView
-            android:layout_width="250dp"
-            android:layout_height="@dimen/info_height"
-            android:gravity="center_vertical"
-            android:src="@drawable/logo"
-            android:textColor="@color/info_text_color" />
+        <ImageButton
+            android:id="@+id/btn_auto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="20dp"
+            android:layout_marginRight="20dp"
+            android:background="@null"
+            android:src="@drawable/heading_btn" />
 
+        <!--topbar-->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="@dimen/info_height"
-            android:gravity="right">
-            <!--速度-->
-            <LinearLayout
-                android:layout_width="@dimen/info_width"
-                android:layout_height="@dimen/info_height"
-                android:layout_marginBottom="5dp"
-                android:orientation="vertical">
+            android:background="@drawable/topbar_pattern"
+            android:orientation="horizontal"
+            android:paddingLeft="@dimen/info_top_bar_margin_top">
 
+            <ImageView
+                android:layout_width="250dp"
+                android:layout_height="@dimen/info_height"
+                android:gravity="center_vertical"
+                android:src="@drawable/logo"
+                android:textColor="@color/info_text_color" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/info_height"
+                android:gravity="right">
+                <!--速度-->
                 <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginBottom="@dimen/st_unit"
-                    android:layout_marginTop="@dimen/st_unit"
-                    android:background="@drawable/frame"
+                    android:layout_width="@dimen/info_width"
+                    android:layout_height="@dimen/info_height"
+                    android:layout_marginBottom="5dp"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginBottom="@dimen/st_unit"
+                        android:layout_marginTop="@dimen/st_unit"
+                        android:background="@drawable/frame"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/info_sub_text_height"
+                            android:layout_gravity="right"
+                            android:layout_marginLeft="@dimen/st_unit"
+                            android:text="Speed"
+                            android:textColor="@color/info_text_color"
+                            android:textSize="@dimen/info_text_size" />
+
+                        <TextView
+                            android:id="@+id/speed"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="right"
+                            android:gravity="center_vertical"
+                            android:text="0"
+                            android:textAlignment="center"
+                            android:textColor="@color/info_text_color"
+                            android:textSize="20sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!--meter-->
+                <LinearLayout
+                    android:layout_width="@dimen/info_width"
+                    android:layout_height="@dimen/info_height"
+                    android:layout_marginBottom="5dp"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginBottom="@dimen/st_unit"
+                        android:layout_marginTop="@dimen/st_unit"
+                        android:background="@drawable/frame"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/info_sub_text_height"
+                            android:layout_gravity="right"
+                            android:layout_marginLeft="@dimen/st_unit"
+                            android:text="Meter"
+                            android:textColor="@color/info_text_color"
+                            android:textSize="@dimen/info_text_size" />
+
+                        <TextView
+                            android:id="@+id/meter"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="right"
+                            android:gravity="center_vertical"
+                            android:text="0"
+                            android:textAlignment="center"
+                            android:textColor="@color/info_text_color"
+                            android:textSize="20sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+                </LinearLayout>
+
+
+                <!--便名-->
+                <LinearLayout
+                    android:layout_width="110dp"
+                    android:layout_height="@dimen/info_height"
+                    android:layout_marginLeft="16dp"
                     android:orientation="vertical">
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/info_sub_text_height"
                         android:layout_gravity="right"
-                        android:layout_marginLeft="@dimen/st_unit"
-                        android:text="Speed"
+                        android:layout_marginTop="@dimen/st_unit"
+                        android:text="ICAO"
                         android:textColor="@color/info_text_color"
                         android:textSize="@dimen/info_text_size" />
 
                     <TextView
-                        android:id="@+id/speed"
+                        android:id="@+id/flight_number"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_gravity="right"
-                        android:gravity="center_vertical"
-                        android:text="0"
-                        android:textAlignment="center"
+                        android:text="--"
                         android:textColor="@color/info_text_color"
-                        android:textSize="20sp"
+                        android:textSize="25sp"
                         android:textStyle="bold" />
                 </LinearLayout>
-            </LinearLayout>
 
-            <!--meter-->
-            <LinearLayout
-                android:layout_width="@dimen/info_width"
-                android:layout_height="@dimen/info_height"
-                android:layout_marginBottom="5dp"
-                android:orientation="vertical">
-
+                <!--current time-->
                 <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginBottom="@dimen/st_unit"
-                    android:layout_marginTop="@dimen/st_unit"
-                    android:background="@drawable/frame"
+                    android:layout_width="@dimen/info_width"
+                    android:layout_height="@dimen/info_height"
                     android:orientation="vertical">
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/info_sub_text_height"
                         android:layout_gravity="right"
-                        android:layout_marginLeft="@dimen/st_unit"
-                        android:text="Meter"
+                        android:layout_marginTop="@dimen/st_unit"
+                        android:text="Current Time"
                         android:textColor="@color/info_text_color"
                         android:textSize="@dimen/info_text_size" />
 
                     <TextView
-                        android:id="@+id/meter"
+                        android:id="@+id/current_time"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_gravity="right"
-                        android:text="0"
-                        android:gravity="center_vertical"
-                        android:textAlignment="center"
+                        android:text="--:--"
                         android:textColor="@color/info_text_color"
-                        android:textSize="20sp"
+                        android:textSize="25sp"
                         android:textStyle="bold" />
                 </LinearLayout>
             </LinearLayout>
 
 
-            <!--便名-->
-            <LinearLayout
-                android:layout_width="110dp"
-                android:layout_height="@dimen/info_height"
-                android:layout_marginLeft="16dp"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/info_sub_text_height"
-                    android:layout_gravity="right"
-                    android:layout_marginTop="@dimen/st_unit"
-                    android:text="ICAO"
-                    android:textColor="@color/info_text_color"
-                    android:textSize="@dimen/info_text_size" />
-
-                <TextView
-                    android:id="@+id/flight_number"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="right"
-                    android:text="--"
-                    android:textColor="@color/info_text_color"
-                    android:textSize="25sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
-
-            <!--current time-->
-            <LinearLayout
-                android:layout_width="@dimen/info_width"
-                android:layout_height="@dimen/info_height"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/info_sub_text_height"
-                    android:layout_gravity="right"
-                    android:layout_marginTop="@dimen/st_unit"
-                    android:text="Current Time"
-                    android:textColor="@color/info_text_color"
-                    android:textSize="@dimen/info_text_size" />
-                <TextView
-                    android:id="@+id/current_time"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="right"
-                    android:text="--:--"
-                    android:textColor="@color/info_text_color"
-                    android:textSize="25sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
         </LinearLayout>
 
-
-    </LinearLayout>
-
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_marginBottom="24dp"
-        android:layout_marginLeft="24dp"
-        android:src="@drawable/scale_xx" />
-</RelativeLayout>
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_marginBottom="24dp"
+            android:layout_marginLeft="24dp"
+            android:src="@drawable/scale_xx" />
+    </RelativeLayout>
+</layout>
 
 

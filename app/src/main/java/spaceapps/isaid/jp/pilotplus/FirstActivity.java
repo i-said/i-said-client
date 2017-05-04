@@ -1,6 +1,7 @@
 package spaceapps.isaid.jp.pilotplus;
 
 import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatSpinner;
@@ -8,19 +9,21 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 
+import spaceapps.isaid.jp.pilotplus.databinding.ActivityFirstBinding;
+
 public class FirstActivity extends AppCompatActivity {
 
     private AppCompatSpinner mSpinner;
     private View mBtnNext;
     private ArrayAdapter<CharSequence> mAdapter;
+    private ActivityFirstBinding mBinding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_first);
-        mBtnNext = findViewById(R.id.btn_next);
-
-        mSpinner = (AppCompatSpinner) findViewById(R.id.spinner);
+        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_first);
+        mBtnNext = mBinding.btnNext;
+        mSpinner = mBinding.spinner;
 // Create an ArrayAdapter using the string array and a default spinner layout
         mAdapter = ArrayAdapter.createFromResource(this,
                 R.array.airplane_array, android.R.layout.simple_spinner_item);
