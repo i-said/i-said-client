@@ -1,6 +1,8 @@
 package spaceapps.isaid.jp.pilotplus;
 
 import android.content.Context;
+import android.databinding.DataBindingUtil;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,17 +17,18 @@ import com.bumptech.glide.request.target.Target;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.Marker;
 
+import java.util.Objects;
+
+import spaceapps.isaid.jp.pilotplus.databinding.ImageInfoWindowBinding;
+
 
 public class PoiInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
     private static final String TAG = "poiInfo";
     @NonNull
     private final Context mContext;
 
-    public PoiInfoWindowAdapter(@NonNull Context context) {
-        if (context == null) {
-            throw new NullPointerException("Require Non null object");
-        }
-        mContext = context;
+    PoiInfoWindowAdapter(Context context) {
+        mContext = Objects.requireNonNull(context);
     }
 
 
@@ -54,14 +57,11 @@ public class PoiInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
 
         Log.d(TAG, "o:" + o.getClass());
         PoiData poi = (PoiData) o;
-        final View view = LayoutInflater.from(mContext).inflate(R.layout.image_info_window, null);
-        final ImageView image = (ImageView) view.findViewById(R.id.image);
-        final TextView name = (TextView) view.findViewById(R.id.name);
-        Log.d(TAG, "view:" + view + " image:" + image);
-
-        poi.image = poi.image.replace("http://", "https://");
+        ImageInfoWindowBinding binding = DataBindingUtil.inflate(LayoutInflater.from(mContext), R.layout.image_info_window, null, false);
+        final ImageView image = binding.image;
+        final TextView name = binding.name;
         name.setText(poi.name);
-        Log.d(TAG, poi.image);
+
         Glide.with(mContext)
                 .load(poi.image)
                 //TODO ローディング画像にしたい
@@ -87,6 +87,6 @@ public class PoiInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
                     }
                 })
                 .into(image);
-        return view;
+        return binding.getRoot();
     }
 }
