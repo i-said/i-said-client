@@ -32,14 +32,9 @@ public class FirstActivity extends AppCompatActivity {
 // Apply the adapter to the spinner
         mSpinner.setAdapter(mAdapter);
 
-        mBtnNext.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startNextActivity((String) mAdapter.getItem(mSpinner.getSelectedItemPosition()));
-            }
+        mBtnNext.setOnClickListener(v -> {
+            startNextActivity((String) mAdapter.getItem(mSpinner.getSelectedItemPosition()));
         });
-
-
     }
 
 

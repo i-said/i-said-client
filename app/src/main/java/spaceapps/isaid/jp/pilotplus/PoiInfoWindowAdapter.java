@@ -26,9 +26,13 @@ public class PoiInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
     private static final String TAG = "poiInfo";
     @NonNull
     private final Context mContext;
+    @NonNull
+    private ImageInfoWindowBinding mBinding;
+
 
     PoiInfoWindowAdapter(Context context) {
         mContext = Objects.requireNonNull(context);
+        mBinding = DataBindingUtil.inflate(LayoutInflater.from(mContext), R.layout.image_info_window, null, false);
     }
 
 
@@ -57,15 +61,14 @@ public class PoiInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
 
         Log.d(TAG, "o:" + o.getClass());
         PoiData poi = (PoiData) o;
-        ImageInfoWindowBinding binding = DataBindingUtil.inflate(LayoutInflater.from(mContext), R.layout.image_info_window, null, false);
-        final ImageView image = binding.image;
-        final TextView name = binding.name;
+        final ImageView image = mBinding.image;
+        final TextView name = mBinding.name;
         name.setText(poi.name);
 
         Glide.with(mContext)
                 .load(poi.image)
                 //TODO ローディング画像にしたい
-//                        .placeholder(R.drawable.dummy)
+//             .placeholder(R.drawable.dummy)
                 .error(R.drawable.dummy)
                 .listener(new RequestListener<String, GlideDrawable>() {
                     @Override
@@ -87,6 +90,7 @@ public class PoiInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
                     }
                 })
                 .into(image);
-        return binding.getRoot();
+
+        return mBinding.getRoot();
     }
 }

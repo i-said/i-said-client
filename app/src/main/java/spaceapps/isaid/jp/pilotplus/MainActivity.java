@@ -71,12 +71,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
 
         mImageButton = mBinding.btnAuto;
-        mImageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mIsAuto = !mIsAuto;
-
-            }
+        mImageButton.setOnClickListener(v -> {
+            mIsAuto = !mIsAuto;
         });
 
         mSpeedInfoView = mBinding.speed;
@@ -132,49 +128,39 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void addLine(final LatLng from, final LatLng to, final boolean isDumy) {
-        mHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                PolylineOptions straight = new PolylineOptions()
-                        .add(from, to)
-                        .geodesic(false)   // 直線
-                        .color((isDumy ? Color.RED : Color.CYAN))
-                        .width(3);
-                mMap.addPolyline(straight);
-
-            }
+        mHandler.post(() -> {
+            PolylineOptions straight = new PolylineOptions()
+                    .add(from, to)
+                    .geodesic(false)   // 直線
+                    .color((isDumy ? Color.RED : Color.CYAN))
+                    .width(3);
+            mMap.addPolyline(straight);
         });
     }
-    private void addMarker(final LatLng latlng ,final  String title) {
+
+    private void addMarker(final LatLng latlng, final String title) {
         addMarker(latlng, title, null);
     }
 
     private void addMarker(final LatLng latlng, final String title, final PoiData poiData) {
-        mHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                MarkerOptions options = new MarkerOptions()
-                        .position(latlng)
-                        .title(title)
-                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.pin));
-                Marker marker = mMap.addMarker(options);
-                marker.setTag(poiData);
+        mHandler.post(() -> {
+            MarkerOptions options = new MarkerOptions()
+                    .position(latlng)
+                    .title(title)
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.pin));
+            Marker marker = mMap.addMarker(options);
+            marker.setTag(poiData);
 
-                if (poiData != null) {
-                    mMarkerArray.append(marker.hashCode(), poiData);
-                }
-
+            if (poiData != null) {
+                mMarkerArray.append(marker.hashCode(), poiData);
             }
         });
     }
 
     private void addAirPlaneMarker(final LatLng latlng) {
-        mHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                MarkerOptions options = new MarkerOptions().position(latlng).icon(BitmapDescriptorFactory.fromResource(R.drawable.airplane));
-                mAirplaneMarker = mMap.addMarker(options);
-            }
+        mHandler.post(() -> {
+            MarkerOptions options = new MarkerOptions().position(latlng).icon(BitmapDescriptorFactory.fromResource(R.drawable.airplane));
+            mAirplaneMarker = mMap.addMarker(options);
         });
     }
 
@@ -186,9 +172,9 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         for (final FlightDataPoint point : list) {
 
             final LatLng fOld = oldLatLon;
-            final LatLng latlon = new LatLng(point.lat,point.lon);
+            final LatLng latlon = new LatLng(point.lat, point.lon);
 
-            if(oldLatLon == null) {
+            if (oldLatLon == null) {
                 oldLatLon = latlon;
 //                mMap.addMarker(new MarkerOptions().position(latlon).title("start"));
                 addMarker(latlon, "Start");
@@ -225,8 +211,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
         @Override
         public void run() {
-            if(mMax <= mCurrent) return;
-            FlightDataPoint point =  mData.get(mCurrent);
+            if (mMax <= mCurrent) return;
+            FlightDataPoint point = mData.get(mCurrent);
 
 
             int mNext = mCurrent + 1;
@@ -240,11 +226,10 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 //            LatLng nextLatLon = new LatLng(nextPoint.lat, nextPoint.lon);
 
 
-            LatLng nowLatLon = new LatLng(point.lat,point.lon);
+            LatLng nowLatLon = new LatLng(point.lat, point.lon);
 
             mAirplaneMarker.setPosition(nowLatLon);
 //            mAirplaneMarker.setRotation(nextPoint.direction);
-
 
 
 //            int width = getResources().getDisplayMetrics().widthPixels;
@@ -272,28 +257,25 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 //            mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(builder.build(),200));
 
 
-            if(mIsAuto) {
+            if (mIsAuto) {
                 animateCamera(nextPoint, point.direction, zoom);
                 //            mMap.moveCamera(CameraUpdateFactory.zoomTo(zoom));
             }
 
             if (mCurrent == 0 || mCurrent % 5 == 0) {
-                Utils.getDataList(getApplicationContext(), point.lat, point.lon, new FutureCallback<List<PoiData>>() {
-                    @Override
-                    public void onCompleted(Exception e, List<PoiData> pois) {
-                        if (pois == null) return;
-                        for (PoiData data : pois) {
-                            Log.d(TAG, "name:" + data.name + " lat:" + data.lat + " lng:" + data.lng + " url:" + data.image);
+                Utils.getDataList(getApplicationContext(), point.lat, point.lon, (e, pois) -> {
+                    if (pois == null) return;
+                    for (PoiData data : pois) {
+                        Log.d(TAG, "name:" + data.name + " lat:" + data.lat + " lng:" + data.lng + " url:" + data.image);
 
-                            addMarker(new LatLng(data.lat, data.lng), data.name, data);
-                        }
+                        addMarker(new LatLng(data.lat, data.lng), data.name, data);
                     }
                 });
 
             }
 
 
-            mHandler.postDelayed(this,point.waittime);
+            mHandler.postDelayed(this, point.waittime);
 
             mCurrent += 1;
 
@@ -303,42 +285,39 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             String timeStr = Utils.formattedTimestamp(timestamp);
             Log.d(TAG, timeStr);
 
-            if (mSpeedInfoView !=null) {
+            if (mSpeedInfoView != null) {
                 int knot = (int) (speed / 1.852);
                 mSpeedInfoView.setText(Integer.toString((int) knot));
             }
-            if (mAltitudeInfoView !=null) {
+            if (mAltitudeInfoView != null) {
                 mAltitudeInfoView.setText(Integer.toString((int) altitude));
             }
-            if (mCurrentTimeInfoView !=null) {
+            if (mCurrentTimeInfoView != null) {
                 mCurrentTimeInfoView.setText(timeStr);
             }
         }
-    };
+    }
+
+    ;
 
 
     private void animateCamera(final FlightDataPoint point, final float direction, final float zoom) {
-        mHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                LatLng nowLatLon = new LatLng(point.lat, point.lon);
+        mHandler.post(() -> {
+            LatLng nowLatLon = new LatLng(point.lat, point.lon);
 
-                CameraPosition.Builder cpBuilder = CameraPosition.builder();
-                cpBuilder.bearing(direction);
-                cpBuilder.target(nowLatLon);
-                cpBuilder.tilt(60);
-                cpBuilder.zoom(zoom);
+            CameraPosition.Builder cpBuilder = CameraPosition.builder();
+            cpBuilder.bearing(direction);
+            cpBuilder.target(nowLatLon);
+            cpBuilder.tilt(60);
+            cpBuilder.zoom(zoom);
 
-                mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cpBuilder.build()));
-            }
+            mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cpBuilder.build()));
         });
 
     }
 
     private void moveCamera(final FlightDataPoint point, final float zoom) {
-        mHandler.post(new Runnable() {
-            @Override
-            public void run() {
+        mHandler.post(() -> {
                 LatLng nowLatLon = new LatLng(point.lat, point.lon);
 
                 CameraPosition.Builder cpBuilder = CameraPosition.builder();
@@ -348,9 +327,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 cpBuilder.zoom(zoom);
 
                 mMap.moveCamera(CameraUpdateFactory.newCameraPosition(cpBuilder.build()));
-            }
         });
-
     }
 
 
@@ -382,7 +359,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             super.onPostExecute(o);
 
 
-
 //            for(FlightDataPoint data:mList) {
 //                Log.d(TAG,data.toString());
 //            }
@@ -393,19 +369,12 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             mHandler.post(mCameraRun);
 
 
-
         }
 
 
     };
 
 
-    private GoogleMap.OnInfoWindowClickListener mOnInfoWindowClickListener = new GoogleMap.OnInfoWindowClickListener() {
-        @Override
-        public void onInfoWindowClick(Marker marker) {
-
-        }
+    private GoogleMap.OnInfoWindowClickListener mOnInfoWindowClickListener = (marker) -> {
     };
-
-
 }
