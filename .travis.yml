@@ -2,8 +2,7 @@ language: android
 
 env:
   global:
-  - secure: hogeohge
-  - secure: EmyzU6mp3fPDyWyqYYt9BUmwSiIHUIz1hdmJA0nM7cWsuafcfAUev7zFRiO636FUQOJ49a7IDBKEHNdlbzqDuXTYxi5G4tHNTwazPV11N2j9/mYRExr4KvWTrOVoWOMUtaVjvPLFAFcPx8tgNKBD86TRO+Z42XnbUL+bdOIbwbveJPR+l1m91au1O0vLehlSViGfWtbNKKH4e/Q9XHkyyM1tzx0jUvG143bxhtUDgJZj0Q8Fp3RcwXY39nT+4AGjwiRjCEKZPu45MJbmMARfsASTALMJoSWzV2fvY9ps0AVONE7LdPM1joh21G8zrYEkB4pPedrbpWg8+y6uwZn75Ca1mClrqO4/jRAGuCXEitRHGKBMRo7x2kfXId1lV+J7WEa0cppRJ+ZgvOVOaEBqy0fiDTyKkzDFfOdq7FDhQBUTum+ZkplhGMzZnWev5s1fLUvKOfc0Hx26blkRbIXJlrxUXkWeYc/cwmWkwNHVFIuuqEdbtCqczxJfWZp2iVDfaosQoXVVh2FaGq4Nuxk4i2ANLZbrEDJ9ko0Kg4QNCTgg3Gxu9DXGrDuypEOa512l5OVXkQ8ScpfXWKnyP4KksASmWgoCpxu83sNd055A7EXeLd+l+sMrON0rH93azm4kYVacMoN0NPiUlVFzHQOpkwlHWhwLwCfWM2BEE/mN2KI=
+  - secure: FHljLcVYogWvjvZ8iVohaMcyrOctba3dvb5BeRHh1efdN4V+IpJvpRbHtgAlaW3bT55++kQw33STk+YSepzwRm817JMu3U0qJ2sFQ9MXazmIkEBrAEUMDmfcBr2/LArtFED+T6gYCvom8lnq5LRQEkzkpREBnqkLcqzjtrP1IcZUoHlgaDZY0pyEopjN7cyPK8kOwvsqB3cavW7vk+LsTF+gm2ObTR+CnApJb1BilHsYMs3rF0mcAkhzzURL5B2hBaYQqGalSgx/JAzZyqLYbDnGcpbBs8YKbmsv5lT7EIYZ7pJaB92VphCy/8/QLkcI6irD4KuphXgFjzSo3lwFYokqEhNq53WQAAgg/3GoR+SdZyer0C5o58Fr/FWeM0bQ/5c0mCIVq0mVs61y8LsN0scAb2L6uqCdC0L4jfMToC2YRge8Fgxt9wUNb7DQf10iNrMNSyjQeiy9FBT8bwAJ15+AwukewU24Hcli3khZu7FzPil0A2U+L1SlDp+5R6TUUplfPaEyMZ+Cmu5qKwZ3RKo0pbsHrcww46mrxuaEwmOqnw2iBlIMPfxaMM+/OoPpecG0tippGmKc+vySulol+itlOtxx4kdI3XEVF3u/Xc9beq7hqouluKijsG/Kz07Mtxx7rKgX/B7W52XJ/kBhjTDsrLdBAERiBVVYtHMAvzs=
 
 jdk:
   - oraclejdk8
@@ -15,8 +14,10 @@ before_install:
 
 android:
   components:
-    - build-tools-25.0.2
+    - tools
     - platform-tools
+    - tools
+    - build-tools-25.0.2
     - android-25
     - extra-google-google_play_services
     - extra-google-m2repository
@@ -28,5 +29,5 @@ script:
 - "./gradlew assembleDebug"
 
 after_success:
-- curl -F "file=@./app/build/apk/app-debug-unaligned.apk" -F "token=${DEPLOYGATE_TOKEN}"
-  -F "DeployGate Update" https://deploygate.com/api/users/kilisima/apps
+- curl -F "file=@./app/build/outputs/apk/app-debug.apk" -F "token=${DEPLOYGATE_TOKEN}"
+  -F "message=DeployGate Update" https://deploygate.com/api/users/shin178/apps
