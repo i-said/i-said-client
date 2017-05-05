@@ -29,5 +29,4 @@ script:
 - "./gradlew assembleDebug"
 
 after_success:
-- curl -F "file=@./app/build/outputs/apk/app-debug.apk" -F "token=${DEPLOYGATE_TOKEN}"
-  -F "message=DeployGate Update" https://deploygate.com/api/users/shin178/apps
+- test $TRAVIS_PULL_REQUEST == "false" && test $TRAVIS_BRANCH == "master" && curl -F "file=@./app/build/outputs/apk/app-debug.apk" -F "token=${DEPLOYGATE_TOKEN}" -F "message=DeployGate Update" https://deploygate.com/api/users/shin178/apps
