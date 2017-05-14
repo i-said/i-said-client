@@ -1,23 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout>
-
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="160dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:text="hoge"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="14sp" />
 
         <ImageView
             android:id="@+id/image"
             android:layout_width="160dp"
             android:layout_height="160dp"
             android:background="@android:color/darker_gray"
+            android:scaleType="centerCrop"
             android:src="@drawable/dummy" />
 
-        <TextView
-            android:id="@+id/name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="hoge"
-            android:textSize="12sp" />
     </LinearLayout>
 </layout>

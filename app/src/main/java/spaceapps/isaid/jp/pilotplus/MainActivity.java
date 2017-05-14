@@ -27,19 +27,28 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.gms.maps.model.TileOverlayOptions;
+import com.google.android.gms.maps.model.TileProvider;
 import com.koushikdutta.async.future.FutureCallback;
 import com.squareup.okhttp.OkHttpClient;
 
 import java.io.InputStream;
 import java.util.List;
+import java.util.Locale;
 
 import spaceapps.isaid.jp.pilotplus.databinding.ActivityMainBinding;
+import spaceapps.isaid.jp.pilotplus.oss.CachingUrlTileProvider.CachingUrlTileProvider;
 
 
-public class MainActivity extends FragmentActivity implements OnMapReadyCallback {
+public class MainActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnCameraMoveStartedListener,
+        GoogleMap.OnCameraMoveListener, GoogleMap.OnCameraMoveCanceledListener, GoogleMap.OnCameraIdleListener {
     private static final String TAG = MainActivity.class.getSimpleName();
 
     public static final String EXTRA_AIRPLANE = "extra_airplane";
+    //    private static final String OSM_MAP_URL_FORMAT = "http://tile.openstreetmap.org/%d/%d/%d.png";
+    private static final String OSM_SATELITE = "http://mt1.google.com/vt/lyrs=y&x=%d&y=%d&z=%d";
+
+    private boolean isZoomControl = false;
 
     private GoogleMap mMap;
     private ImageButton mImageButton;
@@ -119,7 +128,24 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+        mMap.setMapType(GoogleMap.MAP_TYPE_NONE);
+
+        TileProvider tileProvider = new CachingUrlTileProvider(getApplicationContext(), 256, 256) {
+
+            @Override
+            public synchronized String getTileUrl(int x, int y, int z) {
+
+//                int reversedY = (1 << z) - y - 1;
+                String s = String.format(Locale.US, OSM_SATELITE, x, y, z);
+
+//                Log.d(TAG,"s:" + s + " reY:" + reversedY);
+                //String s = String.format(Locale.US, OSM_MAP_URL_FORMAT, z, x, y);
+                return s;
+            }
+        };
+
+
+        mMap.addTileOverlay(new TileOverlayOptions().tileProvider(tileProvider).zIndex(0));
 
         task.execute();
 
@@ -139,7 +165,9 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                         .add(from, to)
                         .geodesic(false)   // 直線
                         .color((isDumy ? Color.RED : Color.CYAN))
+                        .zIndex(10)
                         .width(3);
+
                 mMap.addPolyline(straight);
 
             }
@@ -156,6 +184,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 MarkerOptions options = new MarkerOptions()
                         .position(latlng)
                         .title(title)
+                        .zIndex(10)
                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.pin));
                 Marker marker = mMap.addMarker(options);
                 marker.setTag(poiData);
@@ -172,7 +201,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         mHandler.post(new Runnable() {
             @Override
             public void run() {
-                MarkerOptions options = new MarkerOptions().position(latlng).icon(BitmapDescriptorFactory.fromResource(R.drawable.airplane));
+                MarkerOptions options = new MarkerOptions().position(latlng).icon(BitmapDescriptorFactory.fromResource(R.drawable.airplane)).zIndex(10);
                 mAirplaneMarker = mMap.addMarker(options);
             }
         });
@@ -209,6 +238,35 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
 
     private CameraRunnable mCameraRun;
+
+    @Override
+    public void onCameraIdle() {
+
+    }
+
+    @Override
+    public void onCameraMoveCanceled() {
+
+    }
+
+    @Override
+    public void onCameraMove() {
+
+    }
+
+    @Override
+    public void onCameraMoveStarted(int reason) {
+        if (reason == GoogleMap.OnCameraMoveStartedListener.REASON_GESTURE) {
+            isZoomControl = false;
+
+
+        } else if (reason == GoogleMap.OnCameraMoveStartedListener.REASON_API_ANIMATION) {
+
+        } else if (reason == GoogleMap.OnCameraMoveStartedListener.REASON_DEVELOPER_ANIMATION) {
+
+        }
+
+    }
 
 
     class CameraRunnable implements Runnable {
@@ -256,13 +314,17 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
 //            mOldMarker = addMarker(nowLatLon, "camera");
 //            mOldMarker = addAirPlaneMarker(nowLatLon);
+            float zoom = mMap.getCameraPosition().zoom;
+            if (isZoomControl) {
 
-            float zoom = 15f;
-            if (point.speed < 80) {
-            } else if (point.speed < 200) {
-                zoom -= 2f;
+                if (point.speed < 80) {
+                } else if (point.speed < 200) {
+                    zoom -= 2f;
+                } else {
+                    zoom -= 3f;
+                }
             } else {
-                zoom -= 3f;
+
             }
 
 //            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latlon, zoom));
