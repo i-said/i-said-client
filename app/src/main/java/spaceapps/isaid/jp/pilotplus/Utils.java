@@ -27,7 +27,7 @@ public class Utils {
     private static final String TAG = Utils.class.getSimpleName();
 
     private static final int TIME_DIVIDE = 30;
-    private static final int TIME_SPEED = 1000;
+    private static final int TIME_SPEED = 1000 / 8;
 
 
     public static  List<FlightDataPoint> loadCsv(Context context, String filename) {
