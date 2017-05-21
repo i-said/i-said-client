@@ -1,5 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'deploygate'
+apply plugin: 'kotlin-android'
 
 android {
     compileSdkVersion 25
@@ -21,6 +22,13 @@ android {
     dataBinding {
         enabled = true
     }
+    sourceSets {
+        main.java.srcDirs += "src/main/kotlin"
+        androidTest.java.srcDirs += "src/androidTest/kotlin"
+    }
+}
+kapt {
+    generateStubs = true
 }
 
 dependencies {
@@ -38,5 +46,6 @@ dependencies {
     compile 'com.github.bumptech.glide:glide:3.7.0'
     compile 'com.github.bumptech.glide:okhttp-integration:1.4.0'
     compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.3'
-
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    kapt 'com.android.databinding:compiler:2.3.1'
 }
