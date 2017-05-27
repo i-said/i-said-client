@@ -164,6 +164,7 @@ public class Utils {
         Ion.with(context)
                 .load(url)
                 .as(new TypeToken<List<PoiData>>() {
+
                 })
                 .setCallback(callback);
     }
