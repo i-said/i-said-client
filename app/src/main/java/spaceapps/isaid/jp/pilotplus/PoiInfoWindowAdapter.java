@@ -1,21 +1,22 @@
 package spaceapps.isaid.jp.pilotplus;
 
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.Marker;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
+
 import android.content.Context;
 import android.databinding.DataBindingUtil;
-import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.Target;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.model.Marker;
 
 import java.util.Objects;
 
@@ -64,6 +65,7 @@ public class PoiInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
 
         Glide.with(mContext)
                 .load(poi.image)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
                 //TODO ローディング画像にしたい
 //                        .placeholder(R.drawable.dummy)
                 .error(R.drawable.dummy)

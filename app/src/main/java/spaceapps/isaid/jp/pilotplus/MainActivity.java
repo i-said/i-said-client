@@ -1,22 +1,5 @@
 package spaceapps.isaid.jp.pilotplus;
 
-import android.content.Intent;
-import android.databinding.DataBindingUtil;
-import android.graphics.Color;
-import android.os.AsyncTask;
-import android.os.Bundle;
-import android.os.Handler;
-import android.support.annotation.WorkerThread;
-import android.support.v4.app.FragmentActivity;
-import android.util.Log;
-import android.util.SparseArray;
-import android.view.View;
-import android.widget.ImageButton;
-import android.widget.TextView;
-
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.integration.okhttp.OkHttpUrlLoader;
-import com.bumptech.glide.load.model.GlideUrl;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -29,8 +12,26 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.maps.model.TileOverlayOptions;
 import com.google.android.gms.maps.model.TileProvider;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.integration.okhttp.OkHttpUrlLoader;
+import com.bumptech.glide.load.model.GlideUrl;
 import com.koushikdutta.async.future.FutureCallback;
 import com.squareup.okhttp.OkHttpClient;
+
+import android.content.Intent;
+import android.databinding.DataBindingUtil;
+import android.graphics.Color;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.os.Handler;
+import android.support.annotation.WorkerThread;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.content.ContextCompat;
+import android.util.Log;
+import android.util.SparseArray;
+import android.widget.ImageButton;
+import android.widget.TextView;
 
 import java.io.InputStream;
 import java.util.List;
@@ -80,12 +81,10 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
 
         mImageButton = mBinding.btnAuto;
-        mImageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mIsAuto = !mIsAuto;
-
-            }
+        mImageButton.setOnClickListener(v -> {
+            mIsAuto = !mIsAuto;
+            mImageButton.setImageDrawable(
+                    ContextCompat.getDrawable(getApplicationContext(), mIsAuto ? R.drawable.heading_btn : R.drawable.heading_btn_disable));
         });
 
         mSpeedInfoView = mBinding.speed;
@@ -173,7 +172,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
     }
-    private void addMarker(final LatLng latlng ,final  String title) {
+
+    private void addMarker(final LatLng latlng, final String title) {
         addMarker(latlng, title, null);
     }
 
@@ -215,9 +215,9 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         for (final FlightDataPoint point : list) {
 
             final LatLng fOld = oldLatLon;
-            final LatLng latlon = new LatLng(point.lat,point.lon);
+            final LatLng latlon = new LatLng(point.lat, point.lon);
 
-            if(oldLatLon == null) {
+            if (oldLatLon == null) {
                 oldLatLon = latlon;
 //                mMap.addMarker(new MarkerOptions().position(latlon).title("start"));
                 addMarker(latlon, "Start");
@@ -283,8 +283,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
         @Override
         public void run() {
-            if(mMax <= mCurrent) return;
-            FlightDataPoint point =  mData.get(mCurrent);
+            if (mMax <= mCurrent) return;
+            FlightDataPoint point = mData.get(mCurrent);
 
 
             int mNext = mCurrent + 1;
@@ -298,11 +298,10 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 //            LatLng nextLatLon = new LatLng(nextPoint.lat, nextPoint.lon);
 
 
-            LatLng nowLatLon = new LatLng(point.lat,point.lon);
+            LatLng nowLatLon = new LatLng(point.lat, point.lon);
 
             mAirplaneMarker.setPosition(nowLatLon);
 //            mAirplaneMarker.setRotation(nextPoint.direction);
-
 
 
 //            int width = getResources().getDisplayMetrics().widthPixels;
@@ -334,7 +333,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 //            mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(builder.build(),200));
 
 
-            if(mIsAuto) {
+            if (mIsAuto) {
                 animateCamera(nextPoint, point.direction, zoom);
                 //            mMap.moveCamera(CameraUpdateFactory.zoomTo(zoom));
             }
@@ -355,7 +354,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             }
 
 
-            mHandler.postDelayed(this,point.waittime);
+            mHandler.postDelayed(this, point.waittime);
 
             mCurrent += 1;
 
@@ -365,18 +364,20 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             String timeStr = Utils.formattedTimestamp(timestamp);
             Log.d(TAG, timeStr);
 
-            if (mSpeedInfoView !=null) {
+            if (mSpeedInfoView != null) {
                 int knot = (int) (speed / 1.852);
                 mSpeedInfoView.setText(Integer.toString((int) knot));
             }
-            if (mAltitudeInfoView !=null) {
+            if (mAltitudeInfoView != null) {
                 mAltitudeInfoView.setText(Integer.toString((int) altitude));
             }
-            if (mCurrentTimeInfoView !=null) {
+            if (mCurrentTimeInfoView != null) {
                 mCurrentTimeInfoView.setText(timeStr);
             }
         }
-    };
+    }
+
+    ;
 
 
     private void animateCamera(final FlightDataPoint point, final float direction, final float zoom) {
@@ -444,7 +445,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             super.onPostExecute(o);
 
 
-
 //            for(FlightDataPoint data:mList) {
 //                Log.d(TAG,data.toString());
 //            }
@@ -453,7 +453,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
             mCameraRun = new CameraRunnable(mList);
             mHandler.post(mCameraRun);
-
 
 
         }
