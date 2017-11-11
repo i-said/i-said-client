@@ -344,9 +344,9 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                     public void onCompleted(Exception e, List<PoiData> pois) {
                         if (pois == null) return;
                         for (PoiData data : pois) {
-                            Log.d(TAG, "name:" + data.name + " lat:" + data.lat + " lng:" + data.lng + " url:" + data.image);
+                            Log.d(TAG, "name:" + data.getName() + " lat:" + data.getLat() + " lng:" + data.getLng() + " url:" + data.getImage());
 
-                            addMarker(new LatLng(data.lat, data.lng), data.name, data);
+                            addMarker(new LatLng(data.getLat(), data.getLng()), data.getName(), data);
                         }
                     }
                 });

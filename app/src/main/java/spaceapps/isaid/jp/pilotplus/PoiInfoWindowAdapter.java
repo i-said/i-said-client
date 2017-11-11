@@ -61,10 +61,10 @@ public class PoiInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
         ImageInfoWindowBinding binding = DataBindingUtil.inflate(LayoutInflater.from(mContext), R.layout.image_info_window, null, false);
         final ImageView image = binding.image;
         final TextView name = binding.name;
-        name.setText(poi.name);
+        name.setText(poi.getName());
 
         Glide.with(mContext)
-                .load(poi.image)
+                .load(poi.getImage())
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 //TODO ローディング画像にしたい
 //                        .placeholder(R.drawable.dummy)
