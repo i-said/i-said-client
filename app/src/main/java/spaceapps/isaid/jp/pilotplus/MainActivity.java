@@ -19,6 +19,7 @@ import com.bumptech.glide.load.model.GlideUrl;
 import com.koushikdutta.async.future.FutureCallback;
 import com.squareup.okhttp.OkHttpClient;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.graphics.Color;
@@ -215,7 +216,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         for (final FlightDataPoint point : list) {
 
             final LatLng fOld = oldLatLon;
-            final LatLng latlon = new LatLng(point.lat, point.lon);
+            final LatLng latlon = new LatLng(point.getLat(), point.getLon());
 
             if (oldLatLon == null) {
                 oldLatLon = latlon;
@@ -227,7 +228,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             }
 
 //            mMap.addMarker(new MarkerOptions().position(latlon).title("latlong:" + latlon.toString()));
-            addLine(fOld, latlon, point.isDummy);
+            addLine(fOld, latlon, point.isDummy());
 
             oldLatLon = latlon;
 
@@ -298,7 +299,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 //            LatLng nextLatLon = new LatLng(nextPoint.lat, nextPoint.lon);
 
 
-            LatLng nowLatLon = new LatLng(point.lat, point.lon);
+            LatLng nowLatLon = new LatLng(point.getLat(), point.getLon());
 
             mAirplaneMarker.setPosition(nowLatLon);
 //            mAirplaneMarker.setRotation(nextPoint.direction);
@@ -316,8 +317,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             float zoom = mMap.getCameraPosition().zoom;
             if (isZoomControl) {
 
-                if (point.speed < 80) {
-                } else if (point.speed < 200) {
+                if (point.getSpeed() < 80) {
+                } else if (point.getSpeed() < 200) {
                     zoom -= 2f;
                 } else {
                     zoom -= 3f;
@@ -334,12 +335,12 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
 
             if (mIsAuto) {
-                animateCamera(nextPoint, point.direction, zoom);
+                animateCamera(nextPoint, point.getDirection(), zoom);
                 //            mMap.moveCamera(CameraUpdateFactory.zoomTo(zoom));
             }
 
             if (mCurrent == 0 || mCurrent % 5 == 0) {
-                Utils.getDataList(getApplicationContext(), point.lat, point.lon, new FutureCallback<List<PoiData>>() {
+                Utils.getDataList(getApplicationContext(), point.getLat(), point.getLon(), new FutureCallback<List<PoiData>>() {
                     @Override
                     public void onCompleted(Exception e, List<PoiData> pois) {
                         if (pois == null) return;
@@ -354,13 +355,13 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             }
 
 
-            mHandler.postDelayed(this, point.waittime);
+            mHandler.postDelayed(this, point.getWaittime());
 
             mCurrent += 1;
 
-            long speed = point.speed;
-            long altitude = point.altitude;
-            long timestamp = point.timestamp;
+            long speed = point.getSpeed();
+            long altitude = point.getAltitude();
+            long timestamp = point.getTimestamp();
             String timeStr = Utils.formattedTimestamp(timestamp);
             Log.d(TAG, timeStr);
 
@@ -384,7 +385,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         mHandler.post(new Runnable() {
             @Override
             public void run() {
-                LatLng nowLatLon = new LatLng(point.lat, point.lon);
+                LatLng nowLatLon = new LatLng(point.getLat(), point.getLon());
 
                 CameraPosition.Builder cpBuilder = CameraPosition.builder();
                 cpBuilder.bearing(direction);
@@ -402,10 +403,10 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         mHandler.post(new Runnable() {
             @Override
             public void run() {
-                LatLng nowLatLon = new LatLng(point.lat, point.lon);
+                LatLng nowLatLon = new LatLng(point.getLat(), point.getLon());
 
                 CameraPosition.Builder cpBuilder = CameraPosition.builder();
-                cpBuilder.bearing(point.direction);
+                cpBuilder.bearing(point.getDirection());
                 cpBuilder.target(nowLatLon);
                 cpBuilder.tilt(60);
                 cpBuilder.zoom(zoom);
