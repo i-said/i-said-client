@@ -21,7 +21,6 @@ import com.squareup.okhttp.OkHttpClient;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.graphics.Color;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.WorkerThread;
@@ -36,6 +35,8 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Locale;
 
+import io.reactivex.Single;
+import io.reactivex.SingleOnSubscribe;
 import spaceapps.isaid.jp.pilotplus.databinding.ActivityMainBinding;
 import spaceapps.isaid.jp.pilotplus.oss.CachingUrlTileProvider.CachingUrlTileProvider;
 
@@ -53,56 +54,54 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     private GoogleMap mMap;
     private ImageButton mImageButton;
 
-    private SparseArray mMarkerArray = new SparseArray();
+    private SparseArray<PoiData> mMarkerArray = new SparseArray<>();
 
-    private OkHttpClient mOkHttpClient;
     private Marker mAirplaneMarker = null;
 
     private List<FlightDataPoint> mList;
     private boolean mIsAuto = true;
     private String mAirplaneName;
-
+    private Handler mHandler = new Handler();
+    private CameraRunnable mCameraRun;
 
     private TextView mSpeedInfoView;
     private TextView mAltitudeInfoView;
     private TextView mCurrentTimeInfoView;
-    private ActivityMainBinding mBinding;
-    private Handler mHandler = new Handler();
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+        ActivityMainBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        mImageButton = mBinding.btnAuto;
+        mImageButton = binding.btnAuto;
         mImageButton.setOnClickListener(v -> {
             mIsAuto = !mIsAuto;
             mImageButton.setImageDrawable(
                     ContextCompat.getDrawable(getApplicationContext(), mIsAuto ? R.drawable.heading_btn : R.drawable.heading_btn_disable));
         });
 
-        mSpeedInfoView = mBinding.speed;
-        mAltitudeInfoView = mBinding.meter;
-        mCurrentTimeInfoView = mBinding.currentTime;
+        mSpeedInfoView = binding.speed;
+        mAltitudeInfoView = binding.meter;
+        mCurrentTimeInfoView = binding.currentTime;
 
         Intent intent = getIntent();
         mAirplaneName = intent.getStringExtra(EXTRA_AIRPLANE);
 
 
-        mOkHttpClient = new OkHttpClient();
-        mOkHttpClient.setFollowRedirects(true);
-        mOkHttpClient.setFollowSslRedirects(true);
+        OkHttpClient okHttpClient = new OkHttpClient();
+        okHttpClient.setFollowRedirects(true);
+        okHttpClient.setFollowSslRedirects(true);
 
         Glide.get(this).register(GlideUrl.class, InputStream.class,
-                new OkHttpUrlLoader.Factory(mOkHttpClient));
+                new OkHttpUrlLoader.Factory(okHttpClient));
 
-        mBinding.flightNumber.setText(mAirplaneName);
+        binding.flightNumber.setText(mAirplaneName);
     }
 
 
@@ -136,29 +135,62 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
         mMap.addTileOverlay(new TileOverlayOptions().tileProvider(tileProvider).zIndex(0));
 
-        task.execute();
+        loadFlightData();
 
         mMap.setInfoWindowAdapter(new PoiInfoWindowAdapter(getApplicationContext()));
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
+    public void onCameraIdle() {
     }
 
-    private void addLine(final LatLng from, final LatLng to, final boolean isDumy) {
+    @Override
+    public void onCameraMoveCanceled() {
+    }
+
+    @Override
+    public void onCameraMove() {
+    }
+
+    @Override
+    public void onCameraMoveStarted(int reason) {
+        if (reason == GoogleMap.OnCameraMoveStartedListener.REASON_GESTURE) {
+            isZoomControl = false;
+        }
+//        } else if (reason == GoogleMap.OnCameraMoveStartedListener.REASON_API_ANIMATION) {
+//        } else if (reason == GoogleMap.OnCameraMoveStartedListener.REASON_DEVELOPER_ANIMATION) {
+//        }
+    }
+
+    private void animateCamera(final FlightDataPoint point, final float direction, final float zoom) {
         mHandler.post(() -> {
-            PolylineOptions straight = new PolylineOptions()
-                    .add(from, to)
-                    .geodesic(false)   // 直線
-                    .color((isDumy ? Color.RED : Color.CYAN))
-                    .zIndex(10)
-                    .width(3);
+            LatLng nowLatLon = new LatLng(point.getLat(), point.getLon());
 
-            mMap.addPolyline(straight);
+            CameraPosition.Builder cpBuilder = CameraPosition.builder();
+            cpBuilder.bearing(direction);
+            cpBuilder.target(nowLatLon);
+            cpBuilder.tilt(60);
+            cpBuilder.zoom(zoom);
 
+            mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cpBuilder.build()));
+        });
+
+    }
+
+    private void moveCamera(final FlightDataPoint point, final float zoom) {
+        mHandler.post(() -> {
+            LatLng nowLatLon = new LatLng(point.getLat(), point.getLon());
+
+            CameraPosition.Builder cpBuilder = CameraPosition.builder();
+            cpBuilder.bearing(point.getDirection());
+            cpBuilder.target(nowLatLon);
+            cpBuilder.tilt(60);
+            cpBuilder.zoom(zoom);
+
+            mMap.moveCamera(CameraUpdateFactory.newCameraPosition(cpBuilder.build()));
         });
     }
+
 
     private void addMarker(final LatLng latlng, final String title) {
         addMarker(latlng, title, null);
@@ -210,30 +242,38 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         addMarker(oldLatLon, "end");
     }
 
-    private CameraRunnable mCameraRun;
+    private void addLine(final LatLng from, final LatLng to, final boolean isDumy) {
+        mHandler.post(() -> {
+            PolylineOptions straight = new PolylineOptions()
+                    .add(from, to)
+                    .geodesic(false)   // 直線
+                    .color((isDumy ? Color.RED : Color.CYAN))
+                    .zIndex(10)
+                    .width(3);
 
-    @Override
-    public void onCameraIdle() {
+            mMap.addPolyline(straight);
+
+        });
     }
 
-    @Override
-    public void onCameraMoveCanceled() {
-    }
+    private void loadFlightData() {
+        Single.create((SingleOnSubscribe<Boolean>) emitter -> {
+            try {
+                List<FlightDataPoint> list = Utils.loadCsv(getApplicationContext(), "Flight_" + mAirplaneName + ".csv");
+                mList = Utils.loadCsvDummyData(list);
+                addLine(list);
 
-    @Override
-    public void onCameraMove() {
+                emitter.onSuccess(true);
+            } catch (Exception ex) {
+                emitter.onError(ex);
+            }
+        }).subscribe(success -> {
+            if (success) {
+                mCameraRun = new CameraRunnable(mList);
+                mHandler.post(mCameraRun);
+            }
+        }, e -> Log.d(TAG, e.toString()));
     }
-
-    @Override
-    public void onCameraMoveStarted(int reason) {
-        if (reason == GoogleMap.OnCameraMoveStartedListener.REASON_GESTURE) {
-            isZoomControl = false;
-        }
-//        } else if (reason == GoogleMap.OnCameraMoveStartedListener.REASON_API_ANIMATION) {
-//        } else if (reason == GoogleMap.OnCameraMoveStartedListener.REASON_DEVELOPER_ANIMATION) {
-//        }
-    }
-
 
     class CameraRunnable implements Runnable {
         private List<FlightDataPoint> mData;
@@ -318,7 +358,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
             if (mSpeedInfoView != null) {
                 int knot = (int) (speed / 1.852);
-                mAltitudeInfoView.setText(String.format(Locale.US, "%d", knot));
+                mSpeedInfoView.setText(String.format(Locale.US, "%d", knot));
             }
             if (mAltitudeInfoView != null) {
                 mAltitudeInfoView.setText(String.format(Locale.US, "%d", altitude));
@@ -328,86 +368,4 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             }
         }
     }
-
-    ;
-
-
-    private void animateCamera(final FlightDataPoint point, final float direction, final float zoom) {
-        mHandler.post(() -> {
-            LatLng nowLatLon = new LatLng(point.getLat(), point.getLon());
-
-            CameraPosition.Builder cpBuilder = CameraPosition.builder();
-            cpBuilder.bearing(direction);
-            cpBuilder.target(nowLatLon);
-            cpBuilder.tilt(60);
-            cpBuilder.zoom(zoom);
-
-            mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cpBuilder.build()));
-        });
-
-    }
-
-    private void moveCamera(final FlightDataPoint point, final float zoom) {
-        mHandler.post(() -> {
-            LatLng nowLatLon = new LatLng(point.getLat(), point.getLon());
-
-            CameraPosition.Builder cpBuilder = CameraPosition.builder();
-            cpBuilder.bearing(point.getDirection());
-            cpBuilder.target(nowLatLon);
-            cpBuilder.tilt(60);
-            cpBuilder.zoom(zoom);
-
-            mMap.moveCamera(CameraUpdateFactory.newCameraPosition(cpBuilder.build()));
-        });
-
-    }
-
-
-    private AsyncTask task = new AsyncTask() {
-
-
-        @Override
-        protected Object doInBackground(Object[] params) {
-
-            List<FlightDataPoint> list = Utils.loadCsv(getApplicationContext(), "Flight_" + mAirplaneName + ".csv");
-            mList = Utils.loadCsvDummyData(list);
-
-            addLine(list);
-
-            return null;
-        }
-
-        @Override
-        protected void onProgressUpdate(Object[] values) {
-            super.onProgressUpdate(values);
-
-        }
-
-        @Override
-        protected void onPostExecute(Object o) {
-            super.onPostExecute(o);
-
-
-//            for(FlightDataPoint data:mList) {
-//                Log.d(TAG,data.toString());
-//            }
-//
-//            addLine();
-
-            mCameraRun = new CameraRunnable(mList);
-            mHandler.post(mCameraRun);
-
-
-        }
-
-
-    };
-
-
-    private GoogleMap.OnInfoWindowClickListener mOnInfoWindowClickListener = new GoogleMap.OnInfoWindowClickListener() {
-        @Override
-        public void onInfoWindowClick(Marker marker) {
-
-        }
-    };
 }
