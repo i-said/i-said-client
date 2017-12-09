@@ -6,47 +6,32 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.AppCompatSpinner
 import android.view.View
-import android.widget.AdapterView
 import android.widget.ArrayAdapter
 
 import spaceapps.isaid.jp.pilotplus.databinding.ActivityFirstBinding
 
 class FirstActivity : AppCompatActivity() {
-
-    private var mSpinner: AppCompatSpinner? = null
-    private var mBtnNext: View? = null
-    private var mAdapter: ArrayAdapter<CharSequence>? = null
-    private var mBinding: ActivityFirstBinding? = null
+    private lateinit var binding: ActivityFirstBinding
+    private lateinit var spinner: AppCompatSpinner
+    private lateinit var btnNext: View
+    private lateinit var adapter: ArrayAdapter<CharSequence>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_first)
-        mBtnNext = mBinding!!.btnNext
-        mSpinner = mBinding!!.spinner
+
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_first)
+        btnNext = binding.btnNext
+        spinner = binding.spinner
         // Create an ArrayAdapter using the string array and a default spinner layout
-        mAdapter = ArrayAdapter.createFromResource(this,
-                R.array.airplane_array, android.R.layout.simple_spinner_item)
+        adapter = ArrayAdapter.createFromResource(this, R.array.airplane_array, android.R.layout.simple_spinner_item)
         // Specify the layout to use when the list of choices appears
-        mAdapter!!.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         // Apply the adapter to the spinner
-        mSpinner!!.adapter = mAdapter
+        spinner.adapter = adapter
 
-        mBtnNext!!.setOnClickListener { startNextActivity(mAdapter!!.getItem(mSpinner!!.selectedItemPosition) as String) }
-
-
-    }
-
-
-    override fun onResume() {
-        super.onResume()
-        mSpinner!!.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {}
-
-            override fun onNothingSelected(parent: AdapterView<*>) {
-
-            }
+        btnNext.setOnClickListener {
+            startNextActivity(adapter.getItem(spinner.selectedItemPosition) as String)
         }
-
     }
 
     private fun startNextActivity(airplane: String) {
